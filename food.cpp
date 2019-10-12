@@ -161,7 +161,7 @@ void Food::newData()
 
     int endIndex;
     while ((endIndex = buf->indexOf(CmdEnd)) > -1) {
-        // 提取一行指令
+        // 提取出一行指令
         QByteArray data = buf->mid(0, endIndex);
         buf->remove(0, endIndex + CmdEnd.length());
 

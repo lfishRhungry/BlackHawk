@@ -18,6 +18,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+    cook.cpp \
     food.cpp \
     main.cpp \
     hunter.cpp \
@@ -25,6 +26,7 @@ SOURCES += \
     tcpsocket.cpp
 
 HEADERS += \
+    cook.h \
     food.h \
     hunter.h \
     tcpserver.h \
