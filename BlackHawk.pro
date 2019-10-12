@@ -1,4 +1,5 @@
 QT       += core gui
+QT       += network
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -18,10 +19,12 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
     main.cpp \
-    hunter.cpp
+    hunter.cpp \
+    tcpserver.cpp
 
 HEADERS += \
-    hunter.h
+    hunter.h \
+    tcpserver.h
 
 FORMS += \
     hunter.ui

