@@ -8,6 +8,7 @@
 #include <QSizePolicy>
 #include <QMenu>
 #include <QAction>
+#include "cook.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class Hunter; }
@@ -24,6 +25,7 @@ public:
 private:
     Ui::Hunter *ui;
     QMenu *m_Rclick; // 右键菜单
+    Cook *mCook; // 服务端
 
 public slots:
 

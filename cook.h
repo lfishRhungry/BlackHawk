@@ -38,9 +38,9 @@ private:
 
 signals:
     // 客户登入或登出，主要是告诉窗口控件
-    void clientLogin(int id, QString userName,
+    void foodLogin(int id, QString userName,
                      QString ip,int port, QString system);
-    void clientLogout(int id);
+    void foodLogout(int id);
 
 public slots:
     // 新客户连接

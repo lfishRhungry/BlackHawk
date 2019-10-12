@@ -56,7 +56,7 @@ void Cook::login(Food *client, QString userName, QString ip, int port, QString s
     client->setId(id);
 
     // 发射登入信号给窗口控件
-    emit clientLogin(id, userName, ip, port, system);
+    emit foodLogin(id, userName, ip, port, system);
 }
 
 void Cook::logout(int id)
@@ -65,5 +65,5 @@ void Cook::logout(int id)
     mFoods.remove(id);
 
     // 发射登出信号给窗口控件
-    emit clientLogout(id);
+    emit foodLogout(id);
 }
