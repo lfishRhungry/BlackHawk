@@ -61,16 +61,13 @@ Hunter::Hunter(QWidget *parent)
     ui->tableOnline->setContextMenuPolicy(Qt::CustomContextMenu);
 
     // 右键出现的每一项的菜单 连接对应逻辑
-    m_Rclick = new QMenu(ui->tableOnline);
-    QAction *actSendBox = m_Rclick->addAction("发送弹窗");
-    QAction *actReboot = m_Rclick->addAction("重启电脑");
-    QAction *actOffline = m_Rclick->addAction("强制下线");
-    connect(actSendBox, &QAction::triggered, [=](){
-        qDebug()<<"hello";
-    });
+    mRclick = new QMenu(this);
+    QAction *actSendBox = mRclick->addAction("发送弹窗");
+    QAction *actReboot = mRclick->addAction("重启电脑");
+    QAction *actOffline = mRclick->addAction("强制下线");
 
     // 将菜单添加至鼠标事件中 再拦截鼠标事件得以处理
-    m_Rclick->installEventFilter(this);
+    mRclick->installEventFilter(this);
 
 
     // 测试
@@ -149,7 +146,7 @@ bool Hunter::eventFilter(QObject *watched, QEvent *event){
     // 右键弹出菜单
     if (watched == (QObject*)ui->tableOnline) {
         if (event->type() == QEvent::ContextMenu) {
-           m_Rclick->exec(QCursor::pos());
+           mRclick->exec(QCursor::pos());
         }
     }
 

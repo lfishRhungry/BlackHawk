@@ -24,7 +24,7 @@ public:
 
 private:
     Ui::Hunter *ui;
-    QMenu *m_Rclick; // 右键菜单
+    QMenu *mRclick; // 右键菜单
     Cook *mCook; // 服务端
 
 public slots:
