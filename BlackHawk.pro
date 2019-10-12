@@ -20,11 +20,13 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += \
     main.cpp \
     hunter.cpp \
-    tcpserver.cpp
+    tcpserver.cpp \
+    tcpsocket.cpp
 
 HEADERS += \
     hunter.h \
-    tcpserver.h
+    tcpserver.h \
+    tcpsocket.h
 
 FORMS += \
     hunter.ui

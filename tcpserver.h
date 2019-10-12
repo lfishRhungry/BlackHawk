@@ -1,4 +1,7 @@
 // tcp服务端接口
+// 会新建一个QTcpServer对象
+// 通过tcpserver类新建监听的服务器对象
+// 可以一直处于监听状态 并接受连接返回对于qtcpsocket对象
 
 
 #ifndef TCPSERVER_H
@@ -25,7 +28,7 @@ private:
     QTcpServer *mServer;
 signals:
     // 当新的连接进来时发送的信号
-    // 一旦有新连接，他就会将新连接的socket用信号发射给调用他的类
+    // @sock 一旦有新连接，他就会将新连接的socket用信号发射给调用他的类
     void newConnection(QTcpSocket *sock);
 
 public slots:
