@@ -8,6 +8,8 @@
 #include <QSizePolicy>
 #include <QMenu>
 #include <QAction>
+#include <QMessageBox>
+#include <QInputDialog>
 #include "cook.h"
 
 QT_BEGIN_NAMESPACE

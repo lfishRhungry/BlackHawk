@@ -21,11 +21,11 @@ public:
 
     // 用id来获取food
     //调用了food中的函数
-    Food *client(int id) {
+    Food *getFoodById(int id) {
         return mFoods[id];
     }
 
-    TcpServer *server() {
+    TcpServer *GetTcpServer() {
         return mServer;
     }
 

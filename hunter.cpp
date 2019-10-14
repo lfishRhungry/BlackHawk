@@ -49,7 +49,9 @@ Hunter::Hunter(QWidget *parent)
     ui->tableOnline->setHorizontalHeaderItem(3, new QTableWidgetItem("端口号"));
     ui->tableOnline->setHorizontalHeaderItem(4, new QTableWidgetItem("系统信息"));
     // 自适应列宽
-    ui->tableOnline->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+    // ui->tableOnline->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+    ui->tableOnline->horizontalHeader()->setStretchLastSection(true);
+    ui->tableOnline->horizontalHeader()->setSectionResizeMode(0, QHeaderView::ResizeToContents);
     // 隐藏水平表头
     ui->tableOnline->verticalHeader()->setHidden(true);
     // 一行一行地选中
@@ -61,10 +63,78 @@ Hunter::Hunter(QWidget *parent)
     ui->tableOnline->setContextMenuPolicy(Qt::CustomContextMenu);
 
     // 右键出现的每一项的菜单 连接对应逻辑
+    // 对食物发送弹窗
     mRclick = new QMenu(this);
     QAction *actSendBox = mRclick->addAction("发送弹窗");
+    connect(actSendBox, &QAction::triggered, this, [=](){
+        // 获取当前用户id
+        int id = curFoodIdInTbl();
+        if (id != -1)
+        {
+            bool isSend;
+            QString text = QInputDialog::getText(this, QString("给%0号食物说句话").arg(id),
+                                                 "请输入您对它的肺腑之言：", QLineEdit::Normal,
+                                                 "", &isSend);
+
+            // 发送
+            if (isSend)
+            {
+                Food *food = mCook->getFoodById(id);
+                food->sendCmdSendBox(text);
+            }
+        }
+        else
+        {
+            qDebug() << "不能发弹窗，食物不在线呀主人！";
+        }
+    });
+    // 强制食物重启
     QAction *actReboot = mRclick->addAction("重启电脑");
+    connect(actReboot, &QAction::triggered, this, [=](){
+        // 获取当前用户id
+        int id = curFoodIdInTbl();
+        if (id != -1)
+        {
+            if(QMessageBox::Yes==QMessageBox::question(this, "主人您三思呀~",
+                                                       "真滴要让这块食物重启吗？？",
+                                                       QMessageBox::Yes | QMessageBox::No,
+                                                       QMessageBox::Yes))
+            {
+                Food *food = mCook->getFoodById(id);
+                food->sendCmdReboot();
+            }
+        }
+        else
+        {
+            qDebug() << "不能强制重启，食物不在线呀主人！";
+        }
+    });
+    // 强制食物下线
     QAction *actOffline = mRclick->addAction("强制下线");
+    connect(actOffline, &QAction::triggered, this, [=](){
+
+
+        // 获取当前用户id
+        QMessageBox::question(this, "亲爱的主人", "真的要下线这块食物吗",
+                              QMessageBox::Yes | QMessageBox::No,
+                              QMessageBox::Yes);
+        int id = curFoodIdInTbl();
+        if (id != -1)
+        {
+            if(QMessageBox::Yes==QMessageBox::question(this, "问一哈", "真的要下线这台肉鸡吗",
+                                                       QMessageBox::Yes | QMessageBox::No,
+                                                       QMessageBox::Yes))
+            {
+                Food *food = mCook->getFoodById(id);
+                food->sendCmdOffline();
+                qDebug() << "主人我下线了";
+            }
+        }
+        else
+        {
+            qDebug() << "不能强制下线，食物不在线呀主人！";
+        }
+    });
 
     // 将菜单添加至鼠标事件中 再拦截鼠标事件得以处理
     mRclick->installEventFilter(this);
@@ -146,7 +216,7 @@ bool Hunter::eventFilter(QObject *watched, QEvent *event){
     // 右键弹出菜单
     if (watched == (QObject*)ui->tableOnline) {
         if (event->type() == QEvent::ContextMenu) {
-           mRclick->exec(QCursor::pos());
+            mRclick->exec(QCursor::pos());
         }
     }
 
