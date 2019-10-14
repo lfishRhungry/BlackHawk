@@ -10,7 +10,7 @@ Food::Food(QTcpSocket *sock, QObject *parent) : QObject(parent), mId(-1)
 
     // 设置计时器来判断客户是否登入，如果没就断开连接
     mLoginTimeout = new QTimer(this);
-    connect(mLoginTimeout, SIGNAL(timeout()), this, SLOT(clientLoginTimeout()));
+    connect(mLoginTimeout, SIGNAL(timeout()), this, SLOT(foodLoginTimeout()));
     mLoginTimeout->start(10*1000);
 }
 
