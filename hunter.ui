@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>745</width>
+    <width>767</width>
     <height>537</height>
    </rect>
   </property>
@@ -22,17 +22,45 @@
     <widget class="QWidget" name="widgetOption" native="true">
      <layout class="QHBoxLayout" name="horizontalLayout">
       <item>
+       <widget class="QLabel" name="labelSister">
+        <property name="text">
+         <string>TextLabel</string>
+        </property>
+       </widget>
+      </item>
+      <item>
        <widget class="QWidget" name="widgetBt" native="true">
         <layout class="QGridLayout" name="gridLayout">
+         <item row="2" column="2">
+          <widget class="QPushButton" name="btOffline">
+           <property name="text">
+            <string>PushButton</string>
+           </property>
+          </widget>
+         </item>
          <item row="0" column="0">
-          <widget class="QPushButton" name="btFile">
+          <widget class="QPushButton" name="btCmd">
+           <property name="text">
+            <string>PushButton</string>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="1">
+          <widget class="QPushButton" name="btReboot">
            <property name="text">
             <string>PushButton</string>
            </property>
           </widget>
          </item>
          <item row="0" column="1">
-          <widget class="QPushButton" name="btCmd">
+          <widget class="QPushButton" name="btFile">
+           <property name="text">
+            <string>PushButton</string>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="0">
+          <widget class="QPushButton" name="btSendBox">
            <property name="text">
             <string>PushButton</string>
            </property>
@@ -40,6 +68,13 @@
          </item>
          <item row="0" column="2">
           <widget class="QPushButton" name="btKeybd">
+           <property name="text">
+            <string>PushButton</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="2">
+          <widget class="QPushButton" name="btDDos">
            <property name="text">
             <string>PushButton</string>
            </property>
@@ -59,13 +94,6 @@
            </property>
           </widget>
          </item>
-         <item row="1" column="2">
-          <widget class="QPushButton" name="btDDos">
-           <property name="text">
-            <string>PushButton</string>
-           </property>
-          </widget>
-         </item>
         </layout>
        </widget>
       </item>
@@ -76,14 +104,14 @@
           <widget class="QWidget" name="widget" native="true">
            <layout class="QGridLayout" name="gridLayout_2">
             <item row="0" column="0">
-             <widget class="QLabel" name="labelIP">
+             <widget class="QLabel" name="labelDomain">
               <property name="text">
                <string>TextLabel</string>
               </property>
              </widget>
             </item>
             <item row="0" column="1">
-             <widget class="QLineEdit" name="lineEditIP"/>
+             <widget class="QLineEdit" name="lineEditDomain"/>
             </item>
             <item row="1" column="0">
              <widget class="QLabel" name="labelPort">
@@ -116,6 +144,13 @@
        </widget>
       </item>
      </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="Line" name="line">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
     </widget>
    </item>
    <item>

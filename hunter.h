@@ -10,6 +10,7 @@
 #include <QAction>
 #include <QMessageBox>
 #include <QInputDialog>
+#include <QMovie>
 #include "cook.h"
 
 QT_BEGIN_NAMESPACE
@@ -41,8 +42,5 @@ public slots:
     // 开启服务器监听
     void startLstn();
 
-protected:
-    // 重写事件过滤函数
-    bool eventFilter(QObject *watched, QEvent *event);
 };
 #endif // HUNTER_H
