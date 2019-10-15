@@ -13,6 +13,7 @@
 #include <QApplication>
 #include <QDesktopWidget>
 #include <QTextEdit>
+#include <QTextCodec>
 
 class Keybd : public QWidget
 {
@@ -26,6 +27,9 @@ private:
     TcpServer *mServer;
     TcpSocket *mSock;
     QTextEdit *mEdit;    // 用来显示接收的键盘数据
+    // 用于解码GBK
+    QTextCodec *codec = QTextCodec::codecForName("GBK");
+
 
 signals:
 

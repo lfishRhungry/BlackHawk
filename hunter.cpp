@@ -42,7 +42,7 @@ Hunter::Hunter(QWidget *parent)
     ui->btScreen->setText("屏幕\n截图");
     ui->btDDos->setText("DDOS\n攻击");
     ui->btProcess->setText("进程\n管理");
-    ui->btKeybd->setText("键盘\n监控");
+    ui->btKeybd->setText("键盘\n监听");
     ui->btSendBox->setText("发送\n弹窗");
     ui->btReboot->setText("强制\n重启");
     ui->btOffline->setText("强行\n下线");

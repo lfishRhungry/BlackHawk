@@ -3,7 +3,7 @@
 Keybd::Keybd(QWidget *parent) : QWidget(parent)
 {
     // 初始化窗口
-    const int w = 400, h = 300;
+    const int w = 600, h = 400;
     const int x = (QApplication::desktop()->width() - w) >> 1;
     const int y = (QApplication::desktop()->height() - h) >> 1;
     this->setGeometry(x, y, w, h);
@@ -51,7 +51,8 @@ void Keybd::processBuffer()
 {
     // 将数据打印到文本框
     QString text = mEdit->toPlainText();
-    mEdit->setText(text.append(*mSock->buffer()));
+    // 针对GBK的解码
+    mEdit->setText(text.append(codec->toUnicode(*mSock->buffer())));
 
     // 清空缓冲区
     mSock->buffer()->clear();
