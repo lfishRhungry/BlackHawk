@@ -20,6 +20,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += \
     cook.cpp \
     food.cpp \
+    keybd.cpp \
     main.cpp \
     hunter.cpp \
     tcpserver.cpp \
@@ -29,6 +30,7 @@ HEADERS += \
     cook.h \
     food.h \
     hunter.h \
+    keybd.h \
     tcpserver.h \
     tcpsocket.h
 

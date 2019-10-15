@@ -12,6 +12,7 @@
 #include <QInputDialog>
 #include <QMovie>
 #include "cook.h"
+#include "keybd.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class Hunter; }

