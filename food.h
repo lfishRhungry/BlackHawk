@@ -10,6 +10,7 @@
 #include <QTimer>
 #include <QTcpSocket>
 #include <QHostAddress>
+#include <QTextCodec>
 
 class Food : public QObject
 {
@@ -60,6 +61,9 @@ private:
     TcpSocket *mSock;       // 与食物通讯的socket 注意 这里用的是我们设计的TcpSocket类
     QTimer *mLoginTimeout;  // 用来判断客户是否超时登入
     int mId;                // 初始值是-1, 登入后会由Cook分配大于或等于0的ID号码
+
+    // 用来转换编码
+    QTextCodec *codec = QTextCodec::codecForName("GBK");
 
     // 处理食物发送过来的指令
     // @cmd: 指令

