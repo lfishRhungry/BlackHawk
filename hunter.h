@@ -11,6 +11,7 @@
 #include <QMessageBox>
 #include <QInputDialog>
 #include <QMovie>
+#include <QList>
 #include "cook.h"
 #include "keybd.h"
 

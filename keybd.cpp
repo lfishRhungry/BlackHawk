@@ -30,7 +30,10 @@ int Keybd::startKeybdServer(QString userName){
         return -1;
     }
 
-    // 开启监控窗口
+    // 开启半模态监控窗口
+    // 阻止对应用的其他窗口进行操作
+    // 但是不会阻塞线程
+    this->setWindowModality(Qt::ApplicationModal);
     this->show();
 
     return mServer->server()->serverPort();
