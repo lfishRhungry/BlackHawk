@@ -14,6 +14,7 @@
 #include <QList>
 #include "cook.h"
 #include "keybd.h"
+#include "shell.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class Hunter; }

@@ -9,7 +9,7 @@
 #include <QObject>
 #include <QWidget>
 #include "tcpsocket.h"
-#include <tcpserver.h>
+#include "tcpserver.h"
 #include <QApplication>
 #include <QDesktopWidget>
 #include <QTextEdit>
