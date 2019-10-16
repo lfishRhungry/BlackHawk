@@ -18,8 +18,12 @@ Shell::Shell(QWidget *parent) : QWidget(parent)
     mBtSend->setText("发送");
     // 当前命令框
     mEditCurrent = new QLineEdit(this);
-    mEditCurrent->setGeometry(0, 30, w, 25);
+    mEditCurrent->setGeometry(0, 30, w - 70, 25);
     mEditCurrent->setReadOnly(true);
+    // 清空按钮
+    mBtClear = new QPushButton(this);
+    mBtClear->setGeometry(w - 65, 30, 60, 25);
+    mBtClear->setText("清空");
     // 命令回显框
     mEditResults = new QTextEdit(this);
     mEditResults->setGeometry(0, 60, w, 540);
@@ -35,10 +39,46 @@ Shell::Shell(QWidget *parent) : QWidget(parent)
         }
     });
 
+    // 清空
+    connect(mBtClear, &QPushButton::clicked, [=](){
+        mEditCurrent->setText("");
+        mEditResults->setText("");
+    });
+
+    // 发送
+    connect(mBtSend, &QPushButton::clicked, [=](){
+        mSock->write(codec->fromUnicode(mEditInput->text()));
+        mEditCurrent->setText(mEditInput->text());
+        mEditInput->setText("");
+    });
+
+
     //--------------------------------------按键逻辑(完)-------------------------------------------
 
-    // 测试
+}
+
+int Shell::startShellServer(QString userName){
+    // 设置窗口标题
+    this->setWindowTitle(userName.append("-远程Shell"));
+
+    // 开启新的服务端
+    mServer = new TcpServer(this);
+    connect(mServer,SIGNAL(newConnection(QTcpSocket*)), this,SLOT(newConnection(QTcpSocket*)));
+
+    mServer->start(0);
+    if (!mServer->server()->isListening()) {
+        qDebug() << "开启远程Shell服务端失败";
+        deleteLater();
+        return -1;
+    }
+
+    // 开启半模态监控窗口
+    // 阻止对应用的其他窗口进行操作
+    // 但是不会阻塞线程
+    this->setWindowModality(Qt::ApplicationModal);
     this->show();
+
+    return mServer->server()->serverPort();
 }
 
 void Shell::newConnection(QTcpSocket *s)
