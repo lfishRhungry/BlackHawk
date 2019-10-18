@@ -30,14 +30,6 @@ Shell::Shell(QWidget *parent) : QWidget(parent)
     mEditResults->setReadOnly(true);
 
     //--------------------------------------按键逻辑-------------------------------------------
-    mBtSend->setEnabled(false);
-    connect(mEditInput, &QLineEdit::textChanged, [=](const QString& text){
-        if (!text.isEmpty()){
-            mBtSend->setEnabled(true);
-        }else {
-            mBtSend->setEnabled(false);
-        }
-    });
 
     // 清空
     connect(mBtClear, &QPushButton::clicked, [=](){
@@ -47,10 +39,14 @@ Shell::Shell(QWidget *parent) : QWidget(parent)
 
     // 发送
     connect(mBtSend, &QPushButton::clicked, [=](){
-        mSock->write(codec->fromUnicode(mEditInput->text()));
+        // 注意发送的时候加上windows的换行符 强制换行
+        mSock->write(codec->fromUnicode(mEditInput->text() + "\r\n"));
         mEditCurrent->setText(mEditInput->text());
         mEditInput->setText("");
     });
+
+    // 收到新消息
+    connect(mSock, &TcpSocket::newData, this, &Shell::processBuffer);
 
 
     //--------------------------------------按键逻辑(完)-------------------------------------------
