@@ -45,9 +45,6 @@ Shell::Shell(QWidget *parent) : QWidget(parent)
         mEditInput->setText("");
     });
 
-    // 收到新消息
-    connect(mSock, &TcpSocket::newData, this, &Shell::processBuffer);
-
 
     //--------------------------------------按键逻辑(完)-------------------------------------------
 
