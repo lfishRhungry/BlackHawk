@@ -28,7 +28,7 @@ private:
     QTextEdit *mEditResults;    // 用来显示接收执行结果
     QLineEdit *mEditCurrent;    // 显示正在执行的命令
     QLineEdit *mEditInput;      // 用来接收用户输入
-    QPushButton *mBtSend;       // 用来发送命令
+    QPushButton *mBtSend;       // 用来发送命令或刷新
     QPushButton *mBtClear;      // 清空回显和当前命令显示
 
     // 用于解码GBK

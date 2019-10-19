@@ -16,6 +16,7 @@ Shell::Shell(QWidget *parent) : QWidget(parent)
     mBtSend = new QPushButton(this);
     mBtSend->setGeometry(w - 65, 0, 60, 25);
     mBtSend->setText("发送");
+    mBtSend->setEnabled(false);
     // 当前命令框
     mEditCurrent = new QLineEdit(this);
     mEditCurrent->setGeometry(0, 30, w - 70, 25);
@@ -28,6 +29,7 @@ Shell::Shell(QWidget *parent) : QWidget(parent)
     mEditResults = new QTextEdit(this);
     mEditResults->setGeometry(0, 60, w, 540);
     mEditResults->setReadOnly(true);
+    mEditResults->setWordWrapMode(QTextOption::NoWrap);
 
     //--------------------------------------按键逻辑-------------------------------------------
 
@@ -35,6 +37,15 @@ Shell::Shell(QWidget *parent) : QWidget(parent)
     connect(mBtClear, &QPushButton::clicked, [=](){
         mEditCurrent->setText("");
         mEditResults->setText("");
+    });
+
+    // 发送刷新按钮的显示
+    connect(mEditInput, &QLineEdit::textChanged, [=](const QString& text){
+        if(!text.isEmpty()){
+            mBtSend->setEnabled(true);
+        }else {
+            mBtSend->setEnabled(false);
+        }
     });
 
     // 发送
