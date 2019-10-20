@@ -56,6 +56,8 @@ void Keybd::processBuffer()
     QString text = mEdit->toPlainText();
     // 针对GBK的解码
     mEdit->setText(text.append(codec->toUnicode(*mSock->buffer())));
+    // 移动到最低端
+    mEdit->moveCursor(QTextCursor::End);
 
     // 清空缓冲区
     mSock->buffer()->clear();

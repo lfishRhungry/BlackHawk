@@ -11,35 +11,29 @@ Shell::Shell(QWidget *parent) : QWidget(parent)
 
     // 输入框
     mEditInput = new QLineEdit(this);
-    mEditInput->setGeometry(0, 0, w - 70, 25);
+    mEditInput->setGeometry(0, 0, w - 135, 25);
     // 发送按钮
     mBtSend = new QPushButton(this);
-    mBtSend->setGeometry(w - 65, 0, 60, 25);
+    mBtSend->setGeometry(w - 130, 0, 60, 25);
     mBtSend->setText("发送");
     mBtSend->setEnabled(false);
-    // 当前命令框
-    mEditCurrent = new QLineEdit(this);
-    mEditCurrent->setGeometry(0, 30, w - 70, 25);
-    mEditCurrent->setReadOnly(true);
     // 清空按钮
     mBtClear = new QPushButton(this);
-    mBtClear->setGeometry(w - 65, 30, 60, 25);
+    mBtClear->setGeometry(w - 65, 0, 60, 25);
     mBtClear->setText("清空");
     // 命令回显框
     mEditResults = new QTextEdit(this);
-    mEditResults->setGeometry(0, 60, w, 540);
+    mEditResults->setGeometry(0, 30, w, 670);
     mEditResults->setReadOnly(true);
-    mEditResults->setWordWrapMode(QTextOption::NoWrap);
 
     //--------------------------------------按键逻辑-------------------------------------------
 
     // 清空
     connect(mBtClear, &QPushButton::clicked, [=](){
-        mEditCurrent->setText("");
         mEditResults->setText("");
     });
 
-    // 发送刷新按钮的显示
+    // 发送按钮enabled逻辑
     connect(mEditInput, &QLineEdit::textChanged, [=](const QString& text){
         if(!text.isEmpty()){
             mBtSend->setEnabled(true);
@@ -48,14 +42,15 @@ Shell::Shell(QWidget *parent) : QWidget(parent)
         }
     });
 
+    // 回车逻辑
+    connect(mEditInput, &QLineEdit::returnPressed, mBtSend, &QPushButton::click);
+
     // 发送
     connect(mBtSend, &QPushButton::clicked, [=](){
         // 注意发送的时候加上windows的换行符 强制换行
         mSock->write(codec->fromUnicode(mEditInput->text() + "\r\n"));
-        mEditCurrent->setText(mEditInput->text());
         mEditInput->setText("");
     });
-
 
     //--------------------------------------按键逻辑(完)-------------------------------------------
 
@@ -102,7 +97,8 @@ void Shell::processBuffer()
     QString text = mEditResults->toPlainText();
     // 针对GBK的解码
     mEditResults->setText(text.append(codec->toUnicode(*mSock->buffer())));
-
+    // 移动到底部
+    mEditResults->moveCursor(QTextCursor::End);
     // 清空缓冲区
     mSock->buffer()->clear();
 }
