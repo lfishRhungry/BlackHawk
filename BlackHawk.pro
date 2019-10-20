@@ -19,6 +19,8 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
     cook.cpp \
+    file.cpp \
+    filetransfer.cpp \
     food.cpp \
     keybd.cpp \
     main.cpp \
@@ -29,6 +31,8 @@ SOURCES += \
 
 HEADERS += \
     cook.h \
+    file.h \
+    filetransfer.h \
     food.h \
     hunter.h \
     keybd.h \

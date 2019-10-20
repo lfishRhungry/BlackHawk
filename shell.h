@@ -12,6 +12,7 @@
 #include <QTextCodec>
 #include <QLineEdit>
 #include <QPushButton>
+#include <QScrollBar>
 
 class Shell : public QWidget
 {
