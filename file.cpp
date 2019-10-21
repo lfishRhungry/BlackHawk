@@ -270,7 +270,7 @@ void File::refreshFoodList()
         // 拼接命令
         QString data;
         data.append(CmdGetDirFiles+CmdSplit);
-        data.append("DIR"+CmdSplit+_curFoodDir.absolutePath());
+        data.append("DIR"+CmdSplit+_curFoodDir.dirName());
         data.append(CmdEnd);
         mSock->write(codec->fromUnicode(data));
     }
@@ -282,7 +282,7 @@ void File::refreshFoodList(QDir dir)
         // 获取当前路径下的所有文件
         QString data;
         data.append(CmdGetDirFiles+CmdSplit);
-        data.append("DIR"+CmdSplit+dir.absolutePath());
+        data.append("DIR"+CmdSplit+dir.dirName()); // 注意！这里不能使用absolutepath 否则会自动加上本地目录前缀
         data.append(CmdEnd);
         mSock->write(codec->fromUnicode(data));
     }
