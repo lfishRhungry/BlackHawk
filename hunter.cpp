@@ -171,6 +171,19 @@ Hunter::Hunter(QWidget *parent)
         }
     });
 
+    // 启动文件操作模块
+    connect(ui->btFile, &QPushButton::clicked, this, [=](){
+        int id = curFoodIdInTbl();
+        if (id != -1) {
+            File *fl = new File();
+            Food *food = mCook->getFoodById(id);
+            int port = fl->startFileServer(QString::number(id));
+
+            // 开始监控
+            food->sendCmdFile(port);
+        }
+    });
+
     // ----------------------------------------按键与对应逻辑（完毕）--------------------------------------------------
 
     // 测试

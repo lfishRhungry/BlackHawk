@@ -96,10 +96,10 @@ public slots:
     void deleteFile();
 
     // 加载本机目录
-    void loadServerDir(QListWidgetItem *item);
-    void loadServerDir(QDir dir);
+    void loadLocalDir(QListWidgetItem *item);
+    void loadLocalDir(QDir dir);
     // 刷新本机列表
-    void refreshServerList();
+    void refreshLocalList();
     // 上传本机文件
     void uploadFile();
 
