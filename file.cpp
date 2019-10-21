@@ -252,7 +252,6 @@ void File::loadFoodDir(QListWidgetItem *item)
                 // 否则 先去掉最后一个结尾反斜杠
                 int tmpSize = _curFoodDir.dirName().size();
                 QString tmpDir = _curFoodDir.dirName().left(tmpSize-1);
-                qDebug()<<"tmpdir:"<<tmpDir;
                 // 再截取到最后一个反斜杠（包含） 就可以得到上层路径
                 dir = QDir(tmpDir.left(tmpDir.lastIndexOf('\\')+1));
             }
@@ -271,7 +270,7 @@ void File::loadFoodDir(QListWidgetItem *item)
                 }
             }
         }
-        qDebug() << dir.dirName();
+        qDebug() << "食物当前文件路径"<< dir.dirName();
         refreshFoodList(dir);
     }
 }
@@ -308,7 +307,7 @@ void File::downloadFile()
         foreach(QString fileName, files) {
             // 开始接收文件
             QDir localDir = _curLocalDir.absoluteFilePath(fileName);
-            QDir foodDir = _curFoodDir.absoluteFilePath(fileName);
+            QDir foodDir = _curFoodDir.dirName() + fileName;
             FileTransfer *ft = new FileTransfer();
             int port = ft->startRecvFileServer(_userName,localDir.path());
 
@@ -332,7 +331,7 @@ void File::deleteFile()
         QStringList files = getCurrentFile(mFoodFileList);
         if (files.length() > 0) {
             foreach(QString file, files) {
-                QString path = _curFoodDir.absoluteFilePath(file);
+                QString path = _curFoodDir.dirName() + file;
 
                 // 发送数据
                 QString data;
@@ -403,7 +402,7 @@ void File::uploadFile()
         foreach(QString fileName, files) {
             // 开始接收文件
             QDir localDir = _curLocalDir.absoluteFilePath(fileName);
-            QDir foodDir = _curFoodDir.absoluteFilePath(fileName);
+            QDir foodDir = _curFoodDir.dirName() + fileName;
             FileTransfer *ft = new FileTransfer();
             int port = ft->startSendFileServer(_userName,localDir.path());
 
