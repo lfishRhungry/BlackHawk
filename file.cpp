@@ -245,20 +245,33 @@ void File::loadFoodDir(QListWidgetItem *item)
         // 如果点击的是..
         if (item->text() == "..") {
             // 如果已经是在盘符了
-            if (_curFoodDir.absolutePath().right(2) == ":/") {
+            if (_curFoodDir.dirName().right(2) == ":\\") {
                 // 就是根目录
                 dir.setPath("");
             } else {
-                dir = QDir(_curFoodDir.absolutePath().left(_curFoodDir.absolutePath().lastIndexOf('/')+1));
+                // 否则 先去掉最后一个结尾反斜杠
+                int tmpSize = _curFoodDir.dirName().size();
+                QString tmpDir = _curFoodDir.dirName().left(tmpSize-1);
+                qDebug()<<"tmpdir:"<<tmpDir;
+                // 再截取到最后一个反斜杠（包含） 就可以得到上层路径
+                dir = QDir(tmpDir.left(tmpDir.lastIndexOf('\\')+1));
             }
         } else {
-            if (_curFoodDir.absolutePath().indexOf("/") == -1) {
-                dir = QDir(_curFoodDir.absolutePath()+item->text());
-            } else {
-                dir = QDir(_curFoodDir.absolutePath()+"/"+item->text());
+            // 点击之前 所在目录为比磁盘还高的根目录
+            if (_curFoodDir.dirName().size() == 0){
+                // 加上磁盘路径
+                dir = QDir(_curFoodDir.dirName()+item->text());
+            }else {
+                // 不在根目录 但是最右边已经有了反斜杠 就直接加上点击路径名即可
+                if (_curFoodDir.dirName().right(1) == '\\'){
+                    dir = QDir(_curFoodDir.dirName()+item->text()+'\\');
+                }else {
+                    // 否则就要再加反斜杠, 注意 作为目录而言 最后再加一个反斜杠比较好理解
+                    dir = QDir(_curFoodDir.dirName()+'\\'+item->text()+'\\');
+                }
             }
         }
-        qDebug() << dir;
+        qDebug() << dir.dirName();
         refreshFoodList(dir);
     }
 }
