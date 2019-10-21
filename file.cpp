@@ -3,6 +3,9 @@
 File::File(QWidget *parent) : QWidget(parent), mSock(nullptr)
 {
     // 初始化路径
+    // 这里有一个地方需要注意 如果qdir要代表非本地的路径
+    // 不要对其使用absolutePath 这会使得系统自动加上当前程序的本地绝对路径
+    // 应该使用dirName得到我们设置好的代表远端的路径
     _curFoodDir.setPath("");
     _curLocalDir.setPath(QDir::currentPath());
 

