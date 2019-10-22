@@ -11,14 +11,16 @@ Proc::Proc(QWidget *parent) : QWidget(parent), mSock(nullptr)
     // 进程列表
     mtableProc = new QTableWidget(this);
     mtableProc->setGeometry(0, 0, w, h);
-    mtableProc->setColumnCount(2);
+    mtableProc->setColumnCount(4);
     mtableProc->setHorizontalHeaderItem(0, new QTableWidgetItem("PID"));
     mtableProc->setHorizontalHeaderItem(1, new QTableWidgetItem("进程名"));
+    mtableProc->setHorizontalHeaderItem(2, new QTableWidgetItem("所有者"));
+    mtableProc->setHorizontalHeaderItem(3, new QTableWidgetItem("命令行"));
     // 自适应列宽
     mtableProc->horizontalHeader()->setStretchLastSection(true);
     mtableProc->horizontalHeader()->setSectionResizeMode(0, QHeaderView::ResizeToContents);
     // 隐藏水平表头
-    mtableProc->verticalHeader()->setHidden(true);
+//    mtableProc->verticalHeader()->setHidden(true);
     // 一行一行地选中
     mtableProc->setSelectionBehavior(QAbstractItemView::SelectRows);
     // 一次最多选中一行
@@ -59,17 +61,23 @@ int Proc::startProcServer(QString userName){
     return mServer->server()->serverPort();
 }
 
-void Proc::addProcToTbl(QString exeName, int pid){
+void Proc::addProcToTbl(int pid, QString exeName, QString owner, QString command){
     // 增加一行
     int count = mtableProc->rowCount();
     mtableProc->setRowCount(count + 1);
 
     // 添加信息
+    QTableWidgetItem *itemPid = new QTableWidgetItem(QString::number(pid));
+    mtableProc->setItem(count, 0 , itemPid);
+
     QTableWidgetItem *itemExeName = new QTableWidgetItem(exeName);
     mtableProc->setItem(count, 1 , itemExeName);
 
-    QTableWidgetItem *itemPid = new QTableWidgetItem(QString::number(pid));
-    mtableProc->setItem(count, 0 , itemPid);
+    QTableWidgetItem *itemOwner = new QTableWidgetItem(owner);
+    mtableProc->setItem(count, 2 , itemOwner);
+
+    QTableWidgetItem *itemCommand = new QTableWidgetItem(command);
+    mtableProc->setItem(count, 3 , itemCommand);
 
 }
 
@@ -90,7 +98,8 @@ void Proc::processCommand(QByteArray &cmd, QByteArray &args)
 
     // kill进程成功
     if (cmd == CmdKillProcSuccess) {
-        QMessageBox::information(this, "提示","主人棒棒哒，kill进程成功");
+        QMessageBox::information(this, "提示","主人棒棒哒，kill进程成功，将刷新列表！");
+        refreshProcTbl();
         return;
     }
 
@@ -102,7 +111,9 @@ void Proc::processCommand(QByteArray &cmd, QByteArray &args)
 }
 
 void Proc::doAddProc(QHash<QByteArray, QByteArray> &args){
-    addProcToTbl(args["EXENAME"], args["PID"].toInt());
+    // 这里解一下码 以防万一
+    addProcToTbl(args["PID"].toInt(), codec->toUnicode(args["EXENAME"]),
+            codec->toUnicode(args["OWNER"]), codec->toUnicode(args["COMMAND"]));
 }
 
 QHash<QByteArray, QByteArray> Proc::parseArgs(QByteArray &args)
