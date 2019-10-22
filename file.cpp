@@ -164,13 +164,13 @@ void File::processCommand(QByteArray &cmd, QByteArray &args)
         return;
     }
 
-    // 获取客户端目录下的所有目录
+    // 获取食物目录下的所有目录
     if (cmd == CmdSendDirs) {
         doSendDirs(hashArgs);
         return;
     }
 
-    // 获取客户端目录下的所有文件
+    // 获取食物目录下的所有文件
     if (cmd == CmdSendFiles) {
         doSendFiles(hashArgs);
         return;
@@ -178,13 +178,13 @@ void File::processCommand(QByteArray &cmd, QByteArray &args)
 
     // 删除文件成功
     if (cmd == CmdDeleteFileSuccess) {
-        //QMessageBox::information(this, "提示","删除文件成功");
+        QMessageBox::information(this, "提示","主人，删除文件成功");
         return;
     }
 
     // 删除文件失败
     if (cmd == CmdDeleteFileFailed) {
-        QMessageBox::warning(this, "提示","删除文件失败");
+        QMessageBox::warning(this, "提示","对不起主人，删除文件失败");
         return;
     }
 }

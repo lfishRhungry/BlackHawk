@@ -25,6 +25,7 @@ SOURCES += \
     keybd.cpp \
     main.cpp \
     hunter.cpp \
+    proc.cpp \
     shell.cpp \
     tcpserver.cpp \
     tcpsocket.cpp
@@ -36,6 +37,7 @@ HEADERS += \
     food.h \
     hunter.h \
     keybd.h \
+    proc.h \
     shell.h \
     tcpserver.h \
     tcpsocket.h

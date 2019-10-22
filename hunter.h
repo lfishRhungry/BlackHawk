@@ -16,6 +16,7 @@
 #include "keybd.h"
 #include "shell.h"
 #include "file.h"
+#include "proc.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class Hunter; }

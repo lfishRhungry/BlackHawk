@@ -25,7 +25,7 @@ public:
     const QByteArray CmdFile = "CMD_FILE";
     const QByteArray CmdShell = "CMD_SHELL";
     const QByteArray CmdDdos = "CMD_DDOS";
-    const QByteArray CmdProcess = "CMD_PROC";
+    const QByteArray CmdProc = "CMD_PROC";
 
     const QByteArray CmdSendBox = "SENDBOX";
     const QByteArray CmdReboot = "REBOOT";
@@ -56,6 +56,7 @@ public:
     void sendCmdFile(int port);
     void sendCmdShell(int port);
     void sendCmdDdos(int port);
+    void sendCmdProc(int port);
 
 private:
     TcpSocket *mSock;       // 与食物通讯的socket 注意 这里用的是我们设计的TcpSocket类

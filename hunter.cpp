@@ -76,7 +76,6 @@ Hunter::Hunter(QWidget *parent)
     ui->tableOnline->setSelectionMode(QAbstractItemView::SingleSelection);
     // 设置不可更改
     ui->tableOnline->setEditTriggers(QAbstractItemView::NoEditTriggers);
-    ui->tableOnline->setContextMenuPolicy(Qt::CustomContextMenu);
 
     // ----------------------------------------按键与对应逻辑--------------------------------------------------
     // 对食物发送弹窗
@@ -181,6 +180,19 @@ Hunter::Hunter(QWidget *parent)
 
             // 开始监控
             food->sendCmdFile(port);
+        }
+    });
+
+    // 启动进程管理模块
+    connect(ui->btProcess, &QPushButton::clicked, this, [=](){
+        int id = curFoodIdInTbl();
+        if(id != -1){
+            Proc *pr = new Proc();
+            Food *food = mCook->getFoodById(id);
+            int port = pr->startProcServer(QString::number(id));
+
+            // 让食物启动进程管理模块
+            food->sendCmdProc(port);
         }
     });
 

