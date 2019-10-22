@@ -76,6 +76,7 @@ int File::startFileServer(QString userName)
     }
 
     // 开启监控窗口
+    this->setWindowModality(Qt::ApplicationModal);
     this->show();
 
     return mServer->server()->serverPort();

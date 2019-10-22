@@ -19,7 +19,7 @@ Hunter::Hunter(QWidget *parent)
     ui->labelSister->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
     ui->labelSister->setContentsMargins(0, 6, 0, 6);
     ui->labelSister->setText("");
-    QMovie *movie = new QMovie(":/Icons/lze.gif");
+    QMovie *movie = new QMovie(":/Icons/seato.gif");
     movie->start();
     ui->labelSister->setMovie(movie);
     ui->labelSister->setScaledContents(true);

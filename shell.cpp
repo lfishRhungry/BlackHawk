@@ -23,7 +23,7 @@ Shell::Shell(QWidget *parent) : QWidget(parent)
     mBtClear->setText("清空");
     // 命令回显框
     mEditResults = new QTextEdit(this);
-    mEditResults->setGeometry(0, 30, w, 670);
+    mEditResults->setGeometry(0, 30, w, 370);
     mEditResults->setReadOnly(true);
 
     //--------------------------------------按键逻辑-------------------------------------------
@@ -53,7 +53,6 @@ Shell::Shell(QWidget *parent) : QWidget(parent)
     });
 
     //--------------------------------------按键逻辑(完)-------------------------------------------
-
 }
 
 int Shell::startShellServer(QString userName){
@@ -94,12 +93,13 @@ void Shell::newConnection(QTcpSocket *s)
 void Shell::processBuffer()
 {
     // 将数据打印到文本框
-    QString text = mEditResults->toPlainText();
+    QString oldText = mEditResults->toPlainText();
     // 针对GBK的解码
-    mEditResults->setText(text.append(codec->toUnicode(*mSock->buffer())));
-    // 移动到底部
-    QScrollBar *scrollbar = mEditResults->verticalScrollBar();
-    scrollbar->setSliderPosition(scrollbar->maximum());
+    mEditResults->setPlainText(oldText.append(codec->toUnicode(*mSock->buffer())));
+    // 移动到最低端
+    mEditResults->moveCursor(QTextCursor::End);
+
+    qDebug()<<mEditResults->toPlainText();
 
     // 清空缓冲区
     mSock->buffer()->clear();

@@ -55,6 +55,7 @@ int Proc::startProcServer(QString userName){
     }
 
     // 开启监控窗口
+    this->setWindowModality(Qt::ApplicationModal);
     this->show();
 
     return mServer->server()->serverPort();
@@ -140,10 +141,7 @@ void Proc::killProc(){
 void Proc::refreshProcTbl(){
     if(mSock){
         // 清空当前进程列表
-//        int count = mtableProc->rowCount();
-//        for (int i = 0; i< count; i++) {
-//            mtableProc->removeRow(i);
-//        }
+        // 注意！！！这才是正确的清空方式！！！！！！！
         mtableProc->setRowCount(0);
 
         // 发送刷新消息
