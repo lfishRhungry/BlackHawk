@@ -90,7 +90,7 @@ void Proc::processCommand(QByteArray &cmd, QByteArray &args)
 
     // kill进程成功
     if (cmd == CmdKillProcSuccess) {
-        QMessageBox::information(this, "提示","主人，kill进程成功");
+        QMessageBox::information(this, "提示","主人棒棒哒，kill进程成功");
         return;
     }
 
@@ -133,8 +133,12 @@ void Proc::killProc(){
 void Proc::refreshProcTbl(){
     if(mSock){
         // 清空当前进程列表
-        mtableProc->clearContents();
+        int count = mtableProc->rowCount();
+        for (int i = 0; i< count; i++) {
+            mtableProc->removeRow(i);
+        }
 
+        // 发送刷新消息
         QString data;
         data.append(CmdFreshProcs +CmdEnd);
         mSock->write(codec->fromUnicode(data));

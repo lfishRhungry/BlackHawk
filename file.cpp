@@ -178,7 +178,7 @@ void File::processCommand(QByteArray &cmd, QByteArray &args)
 
     // 删除文件成功
     if (cmd == CmdDeleteFileSuccess) {
-        QMessageBox::information(this, "提示","主人，删除文件成功");
+        QMessageBox::information(this, "提示","主人棒棒哒，删除文件成功");
         return;
     }
 
