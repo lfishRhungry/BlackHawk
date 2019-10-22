@@ -11,11 +11,10 @@ Proc::Proc(QWidget *parent) : QWidget(parent), mSock(nullptr)
     // 进程列表
     mtableProc = new QTableWidget(this);
     mtableProc->setGeometry(0, 0, w, h);
-    mtableProc->setColumnCount(4);
+    mtableProc->setColumnCount(3);
     mtableProc->setHorizontalHeaderItem(0, new QTableWidgetItem("PID"));
     mtableProc->setHorizontalHeaderItem(1, new QTableWidgetItem("进程名"));
     mtableProc->setHorizontalHeaderItem(2, new QTableWidgetItem("所有者"));
-    mtableProc->setHorizontalHeaderItem(3, new QTableWidgetItem("命令行"));
     // 自适应列宽
     mtableProc->horizontalHeader()->setStretchLastSection(true);
     mtableProc->horizontalHeader()->setSectionResizeMode(0, QHeaderView::ResizeToContents);
@@ -61,7 +60,7 @@ int Proc::startProcServer(QString userName){
     return mServer->server()->serverPort();
 }
 
-void Proc::addProcToTbl(int pid, QString exeName, QString owner, QString command){
+void Proc::addProcToTbl(int pid, QString exeName, QString owner){
     // 增加一行
     int count = mtableProc->rowCount();
     mtableProc->setRowCount(count + 1);
@@ -75,9 +74,6 @@ void Proc::addProcToTbl(int pid, QString exeName, QString owner, QString command
 
     QTableWidgetItem *itemOwner = new QTableWidgetItem(owner);
     mtableProc->setItem(count, 2 , itemOwner);
-
-    QTableWidgetItem *itemCommand = new QTableWidgetItem(command);
-    mtableProc->setItem(count, 3 , itemCommand);
 
 }
 
@@ -113,7 +109,7 @@ void Proc::processCommand(QByteArray &cmd, QByteArray &args)
 void Proc::doAddProc(QHash<QByteArray, QByteArray> &args){
     // 这里解一下码 以防万一
     addProcToTbl(args["PID"].toInt(), codec->toUnicode(args["EXENAME"]),
-            codec->toUnicode(args["OWNER"]), codec->toUnicode(args["COMMAND"]));
+            codec->toUnicode(args["OWNER"]));
 }
 
 QHash<QByteArray, QByteArray> Proc::parseArgs(QByteArray &args)
@@ -144,10 +140,11 @@ void Proc::killProc(){
 void Proc::refreshProcTbl(){
     if(mSock){
         // 清空当前进程列表
-        int count = mtableProc->rowCount();
-        for (int i = 0; i< count; i++) {
-            mtableProc->removeRow(i);
-        }
+//        int count = mtableProc->rowCount();
+//        for (int i = 0; i< count; i++) {
+//            mtableProc->removeRow(i);
+//        }
+        mtableProc->setRowCount(0);
 
         // 发送刷新消息
         QString data;

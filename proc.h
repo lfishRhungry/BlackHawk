@@ -57,7 +57,7 @@ signals:
 
 public slots:
     // 添加进程到列表
-    void addProcToTbl(int pid, QString exeName, QString owner, QString command);
+    void addProcToTbl(int pid, QString exeName, QString owner);
     // 杀死进程
     void killProc();
     // 刷新进程列表
