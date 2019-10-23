@@ -133,11 +133,14 @@ QHash<QByteArray, QByteArray> Proc::parseArgs(QByteArray &args)
 
 void Proc::killProc(){
     if (mSock){
-        QString data;
-        data.append(CmdKillProc + CmdSplit);
-        data.append("PID" + CmdSplit);
-        data.append(QString::number(curProcPidInTbl(), 10) + CmdEnd);
-        mSock->write(codec->fromUnicode(data));
+        if(QMessageBox::Yes==QMessageBox::question(this, "问一哈", "主人！真的要kill这个进程吗？",
+                                                   QMessageBox::Yes | QMessageBox::No,
+                                                   QMessageBox::Yes)){
+            QString data;
+            data.append(CmdKillProc + CmdSplit);
+            data.append("PID" + CmdSplit);
+            data.append(QString::number(curProcPidInTbl(), 10) + CmdEnd);
+            mSock->write(codec->fromUnicode(data));}
     }
 
 }

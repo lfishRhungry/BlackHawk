@@ -334,18 +334,22 @@ void File::deleteFile()
         // 删除当前文件
         QStringList files = getCurrentFile(mFoodFileList);
         if (files.length() > 0) {
-            foreach(QString file, files) {
-                QString path = _curFoodDir.dirName() + file;
+            if(QMessageBox::Yes==QMessageBox::question(this, "问一哈", "主人！真的要删除文件吗？",
+                                                       QMessageBox::Yes | QMessageBox::No,
+                                                       QMessageBox::Yes)){
+                foreach(QString file, files) {
+                    QString path = _curFoodDir.dirName() + file;
 
-                // 发送数据
-                QString data;
-                data.append(CmdDeleteFile+CmdSplit);
-                data.append("FILE_PATH"+CmdSplit+path);
-                data.append(CmdEnd);
-                mSock->write(codec->fromUnicode(data));
+                    // 发送数据
+                    QString data;
+                    data.append(CmdDeleteFile+CmdSplit);
+                    data.append("FILE_PATH"+CmdSplit+path);
+                    data.append(CmdEnd);
+                    mSock->write(codec->fromUnicode(data));
 
-                // 刷新列表
-                refreshFoodList();
+                    // 刷新列表
+                    refreshFoodList();
+                }
             }
         }
     }
