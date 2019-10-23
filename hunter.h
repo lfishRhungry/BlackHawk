@@ -17,6 +17,8 @@
 #include "shell.h"
 #include "file.h"
 #include "proc.h"
+#include "ddos.h"
+#include "ddosatk.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class Hunter; }

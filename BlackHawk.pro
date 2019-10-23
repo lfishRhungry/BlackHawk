@@ -19,6 +19,8 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
     cook.cpp \
+    ddos.cpp \
+    ddosatk.cpp \
     file.cpp \
     filetransfer.cpp \
     food.cpp \
@@ -32,6 +34,8 @@ SOURCES += \
 
 HEADERS += \
     cook.h \
+    ddos.h \
+    ddosatk.h \
     file.h \
     filetransfer.h \
     food.h \

