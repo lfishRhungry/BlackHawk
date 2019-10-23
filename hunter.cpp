@@ -49,7 +49,7 @@ Hunter::Hunter(QWidget *parent)
 
     // 初始化区
     ui->widgetInit->setFixedWidth(230);
-    ui->widgetInput->setFixedHeight(100);
+    ui->widgetInput->setFixedHeight(120);
     // 生成食物反向连接的域名
     ui->labelDomain->setText("连接域名");
     ui->labelDomain->setAlignment(Qt::AlignCenter);
