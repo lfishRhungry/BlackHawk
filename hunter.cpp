@@ -10,7 +10,7 @@ Hunter::Hunter(QWidget *parent)
     // -------------------------------------------界面设计------------------------------------------------
     // 主窗口
     this->setWindowTitle("Black Hawk 远控软件服务端 by lfish");
-    this->setFixedSize(700, 500);
+    this->setFixedSize(730, 500);
 
     // 总设置区
     ui->widgetOption->setFixedHeight(200);
@@ -19,7 +19,7 @@ Hunter::Hunter(QWidget *parent)
     ui->labelSister->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
     ui->labelSister->setContentsMargins(0, 6, 0, 6);
     ui->labelSister->setText("");
-    QMovie *movie = new QMovie(":/Icons/seato.gif");
+    QMovie *movie = new QMovie(":/Icons/lze");
     movie->start();
     ui->labelSister->setMovie(movie);
     ui->labelSister->setScaledContents(true);
@@ -48,15 +48,33 @@ Hunter::Hunter(QWidget *parent)
     ui->btOffline->setText("强行\n下线");
 
     // 初始化区
-    ui->widgetInit->setFixedWidth(200);
-
-    ui->labelDomain->setText("域名");
-    ui->labelPort->setText("端口");
+    ui->widgetInit->setFixedWidth(230);
+    ui->widgetInput->setFixedHeight(100);
+    // 生成食物反向连接的域名
+    ui->labelDomain->setText("连接域名");
     ui->labelDomain->setAlignment(Qt::AlignCenter);
-    ui->labelPort->setAlignment(Qt::AlignCenter);
-
-    ui->btStart->setText("开始监听");
-    ui->btStop->setText("停止监听");
+    ui->lineEditDomain->setText("127.0.0.1");
+    ui->lineEditDomain->setMaxLength(80);
+    ui->lineEditDomain->setAlignment(Qt::AlignCenter);
+    ui->lineEditDomain->setToolTip("生成食物反向连接的域名");
+    // 生成食物反向连接的端口
+    ui->labelPort1->setText("连接端口");
+    ui->labelPort1->setAlignment(Qt::AlignCenter);
+    ui->lineEditPort1->setToolTip("生成食物反向连接的端口");
+    ui->lineEditPort1->setValidator(new QIntValidator(1,65535));
+    ui->lineEditPort1->setAlignment(Qt::AlignCenter);
+    // hunter服务器监听端口
+    ui->labelPort2->setText("监听端口");
+    ui->labelPort2->setAlignment(Qt::AlignCenter);
+    ui->lineEditPort2->setToolTip("hunter服务器监听端口");
+    ui->lineEditPort2->setValidator(new QIntValidator(1,65535));
+    ui->lineEditPort2->setAlignment(Qt::AlignCenter);
+    // 启动hunter服务器开关
+    ui->btSwitch->setText("启动hunter");
+    ui->btSwitch->setToolTip("开始或停止监听端口");
+    // 生成食物端
+    ui->btGenerate->setText("用心做礼物");
+    ui->btGenerate->setToolTip("根据连接端口和域名生成食物端");
 
     // 上线表格区
     ui->tableOnline->setColumnCount(5);
@@ -64,7 +82,7 @@ Hunter::Hunter(QWidget *parent)
     ui->tableOnline->setHorizontalHeaderItem(1, new QTableWidgetItem("用户名"));
     ui->tableOnline->setHorizontalHeaderItem(2, new QTableWidgetItem("IP地址"));
     ui->tableOnline->setHorizontalHeaderItem(3, new QTableWidgetItem("端口号"));
-    ui->tableOnline->setHorizontalHeaderItem(4, new QTableWidgetItem("系统信息"));
+    ui->tableOnline->setHorizontalHeaderItem(4, new QTableWidgetItem("系统版本"));
     // 自适应列宽
     ui->tableOnline->horizontalHeader()->setStretchLastSection(true);
     ui->tableOnline->horizontalHeader()->setSectionResizeMode(0, QHeaderView::ResizeToContents);
@@ -78,6 +96,33 @@ Hunter::Hunter(QWidget *parent)
     ui->tableOnline->setEditTriggers(QAbstractItemView::NoEditTriggers);
 
     // ----------------------------------------按键与对应逻辑--------------------------------------------------
+
+    // 生成食物端口和hunter服务器监听端口默认相同
+    connect(ui->lineEditPort1, &QLineEdit::textChanged, ui->lineEditPort2, &QLineEdit::setText);
+
+    // hunter服务器开关
+    connect(ui->btSwitch, &QPushButton::clicked, this, [=](){
+        if (mCook->GetTcpServer()->server()->isListening()) {
+            mCook->stop();
+            ui->btSwitch->setText("启动hunter服务器");
+            ui->lineEditPort2->setReadOnly(false);
+        } else {
+            // 根据输入端口开启hunter服务器
+            if (ui->lineEditPort2->text().isEmpty()){
+                QMessageBox::warning(this, "提示", "主人，要先输入监听端口哟~");
+                return;
+            }
+            mCook->start(ui->lineEditPort2->text().toInt());
+            if (mCook->GetTcpServer()->server()->isListening()) {
+                QMessageBox::information(this,"提示","恭喜主人！hunter服务器成功开启~");
+                ui->btSwitch->setText("停止hunter服务器");
+                ui->lineEditPort2->setReadOnly(true);
+            } else {
+                QMessageBox::warning(this, "提示", "对不起主人...开启服务端失败");
+            }
+        }
+    });
+
     // 对食物发送弹窗
     connect(ui->btSendBox, &QPushButton::clicked, this, [=](){
         // 获取当前用户id
@@ -198,12 +243,13 @@ Hunter::Hunter(QWidget *parent)
 
     // ----------------------------------------按键与对应逻辑（完毕）--------------------------------------------------
 
-    // 测试
+
+    // 初始化hunter服务器
     mCook = new Cook(this);
     connect(mCook, SIGNAL(foodLogin(int,QString,QString,int,QString)),
             this, SLOT(addFoodToTbl(int,QString,QString,int,QString)));
     connect(mCook, SIGNAL(foodLogout(int)), this, SLOT(rmFoodFromTbl(int)));
-    mCook->start(18000);
+//    mCook->start(18000)
 
 
 
