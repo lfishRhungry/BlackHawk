@@ -13,6 +13,7 @@ Ddos::Ddos(QDialog *parent) : QDialog(parent)
     mEditIP->setText("0.0.0.0");
     mEditIP->setMaxLength(80);
     mEditIP->setGeometry(105,20,80,30);
+    mEditIP->setAlignment(Qt::AlignCenter);
 
     QLabel *PORT=new QLabel("目标PORT",this);
     PORT->setGeometry(30,70,60,30);
@@ -20,10 +21,11 @@ Ddos::Ddos(QDialog *parent) : QDialog(parent)
     mEditPORT->setText("80");
     mEditPORT->setValidator(new QIntValidator(1,65535));
     mEditPORT->setGeometry(105,70,80,30);
+    mEditPORT->setAlignment(Qt::AlignCenter);
 
     QPushButton *ATK=new QPushButton("攻击",this);
     connect(ATK,SIGNAL(clicked(bool)),this,SLOT(close()));
-    ATK->setGeometry(200,20,80,80);
+    ATK->setGeometry(200,40,60,40);
     // 强制模式对话框
     this->setAttribute(Qt::WA_ShowModal,true);
     this->exec();

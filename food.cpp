@@ -131,11 +131,12 @@ QHash<QByteArray, QByteArray> Food::parseArgs(QByteArray &args)
 void Food::doLogin(QHash<QByteArray, QByteArray> &args)
 {
     // 发射登录信号
-    QString userName = args["USER_NAME"];
-    QString system = args["SYSTEM"];
+    QString userName = codec->toUnicode(args["USER_NAME"]);
+    QString system = codec->toUnicode(args["SYSTEM"]);
     QString ip = mSock->socket()->peerAddress().toString();
+    QString processor = codec->toUnicode(args["PROCESSOR"]);
     int port = mSock->socket()->peerPort();
-    emit login(this, userName, ip, port, system);
+    emit login(this, userName, ip, port, system, processor);
 
     // 输出信息
     qDebug() << ip << ":" << port << " 已经登入服务端";

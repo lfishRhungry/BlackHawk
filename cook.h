@@ -39,7 +39,7 @@ private:
 signals:
     // 客户登入或登出，主要是告诉窗口控件
     void foodLogin(int id, QString userName,
-                     QString ip,int port, QString system);
+                     QString ip,int port, QString system, QString processor);
     void foodLogout(int id);
 
 public slots:
@@ -48,7 +48,7 @@ public slots:
 
     // 客户登入
     void login(Food*, QString userName,
-                  QString ip, int port, QString system);
+                  QString ip, int port, QString system, QString processor);
 
     // 客户登出
     void logout(int id);

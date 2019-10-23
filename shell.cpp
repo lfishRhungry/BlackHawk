@@ -99,8 +99,6 @@ void Shell::processBuffer()
     // 移动到最低端
     mEditResults->moveCursor(QTextCursor::End);
 
-    qDebug()<<mEditResults->toPlainText();
-
     // 清空缓冲区
     mSock->buffer()->clear();
 }

@@ -15,6 +15,10 @@ Proc::Proc(QWidget *parent) : QWidget(parent), mSock(nullptr)
     mtableProc->setHorizontalHeaderItem(0, new QTableWidgetItem("PID"));
     mtableProc->setHorizontalHeaderItem(1, new QTableWidgetItem("进程名"));
     mtableProc->setHorizontalHeaderItem(2, new QTableWidgetItem("所有者"));
+    // 设置列宽
+    mtableProc->setColumnWidth(0, 50);
+    mtableProc->setColumnWidth(1, 200);
+    mtableProc->horizontalHeader()->setSectionResizeMode(2, QHeaderView::Stretch);
     // 自适应列宽
     mtableProc->horizontalHeader()->setStretchLastSection(true);
     mtableProc->horizontalHeader()->setSectionResizeMode(0, QHeaderView::ResizeToContents);

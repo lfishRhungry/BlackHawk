@@ -43,12 +43,12 @@ void Cook::newConnection(QTcpSocket *sock)
 {
     // 创建ZeroClient，把sock添加进去
     Food *food = new Food(sock);
-    connect(food, SIGNAL(login(Food*,QString,QString,int,QString)),
-            this, SLOT(login(Food*,QString,QString,int,QString)));
+    connect(food, SIGNAL(login(Food*,QString,QString,int,QString,QString)),
+            this, SLOT(login(Food*,QString,QString,int,QString,QString)));
     connect(food, SIGNAL(logout(int)), this, SLOT(logout(int)));
 }
 
-void Cook::login(Food *client, QString userName, QString ip, int port, QString system)
+void Cook::login(Food *client, QString userName, QString ip, int port, QString system, QString processor)
 {
     // 增加客户到哈希表
     int id = generateId();
@@ -56,7 +56,7 @@ void Cook::login(Food *client, QString userName, QString ip, int port, QString s
     client->setId(id);
 
     // 发射登入信号给窗口控件
-    emit foodLogin(id, userName, ip, port, system);
+    emit foodLogin(id, userName, ip, port, system, processor);
 }
 
 void Cook::logout(int id)

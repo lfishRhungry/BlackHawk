@@ -12,6 +12,9 @@
 #include <QInputDialog>
 #include <QMovie>
 #include <QList>
+#include <QHeaderView>
+#include <QtNetwork>
+#include <QFont>
 #include "cook.h"
 #include "keybd.h"
 #include "shell.h"
@@ -40,14 +43,14 @@ private:
 public slots:
 
     // 添加食物列表
-    void addFoodToTbl(int id, QString username, QString ipaddr, int port, QString sysInfo);
+    void addFoodToTbl(int id, QString username, QString ipaddr, int port, QString sysInfo, QString proInfo);
     // 删除食物
     void rmFoodFromTbl(int id);
     // 返回当前选中食物ID
     int curFoodIdInTbl();
 
-    // 开启服务器监听
-    void startLstn();
+    //查询并返回ip所在城市
+    QString ipLocation(QString ip);
 
 };
 #endif // HUNTER_H

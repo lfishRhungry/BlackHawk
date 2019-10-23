@@ -80,7 +80,7 @@ private:
 signals:
     // 登入和登出信号
     // @food: 自己
-    void login(Food *food, QString userName, QString ip, int port, QString system);
+    void login(Food *food, QString userName, QString ip, int port, QString system, QString processor);
     void logout(int id);
 
 public slots:
