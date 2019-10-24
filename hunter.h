@@ -15,6 +15,7 @@
 #include <QHeaderView>
 #include <QtNetwork>
 #include <QFont>
+#include <QFileDialog>
 #include "cook.h"
 #include "keybd.h"
 #include "shell.h"

