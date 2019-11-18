@@ -3,10 +3,10 @@
 File::File(QWidget *parent) : QWidget(parent), mSock(nullptr)
 {
     // 初始化路径
-    // 这里有一个地方需要注意 如果qdir要代表非本地的路径
-    // 不要对其使用absolutePath 这会使得系统自动加上当前程序的本地绝对路径
-    // 应该使用dirName得到我们设置好的代表远端的路径
-    _curFoodDir.setPath("");
+    // 这里的远端路径使用字符串形式 因为只存在拼接的操作
+    // 这样做不会产生qt在不同平台下对远端QDir的不同解释
+    // 本地路径使用QDir 方便在本地进行文件操作
+    _curFoodDir = "";
     _curLocalDir.setPath(QDir::currentPath());
 
     // 初始化窗口
@@ -207,7 +207,7 @@ QHash<QByteArray, QByteArray> File::parseArgs(QByteArray &args)
 void File::doSendDrives(QHash<QByteArray, QByteArray> &args)
 {
     // 重设路径
-    _curFoodDir.setPath("");
+    _curFoodDir = "";
 
     // 清空列表
     mFoodFileList->clear();
@@ -220,7 +220,7 @@ void File::doSendDrives(QHash<QByteArray, QByteArray> &args)
 void File::doSendDirs(QHash<QByteArray, QByteArray> &args)
 {
     // 重设路径
-    _curFoodDir.setPath(codec->toUnicode(args["DIR"]));
+    _curFoodDir = codec->toUnicode(args["DIR"]);
 
     // 清空列表
     mFoodFileList->clear();
@@ -245,36 +245,39 @@ void File::loadFoodDir(QListWidgetItem *item)
 {
     // 双击后加载新文件夹
     if (item->whatsThis() == FileTypeDir || item->whatsThis() == FileTypeDrive) {
-        QDir dir;
+        QString dir;
         // 如果点击的是..
         if (item->text() == "..") {
             // 如果已经是在盘符了
-            if (_curFoodDir.dirName().right(2) == ":\\") {
+            if (_curFoodDir.right(2) == ":\\") {
                 // 就是根目录
-                dir.setPath("");
+                dir = "";
             } else {
                 // 否则 先去掉最后一个结尾反斜杠
-                int tmpSize = _curFoodDir.dirName().size();
-                QString tmpDir = _curFoodDir.dirName().left(tmpSize-1);
+                int tmpSize = _curFoodDir.size();
+                QString tmpDir = _curFoodDir.left(tmpSize-1);
                 // 再截取到最后一个反斜杠（包含） 就可以得到上层路径
-                dir = QDir(tmpDir.left(tmpDir.lastIndexOf('\\')+1));
+                dir = tmpDir.left(tmpDir.lastIndexOf('\\')+1);
             }
         } else {
             // 点击之前 所在目录为比磁盘还高的根目录
-            if (_curFoodDir.dirName().size() == 0){
+            if (_curFoodDir.size() == 0){
                 // 加上磁盘路径
-                dir = QDir(_curFoodDir.dirName()+item->text());
+                dir = _curFoodDir+item->text();
             }else {
                 // 不在根目录 但是最右边已经有了反斜杠 就直接加上点击路径名即可
-                if (_curFoodDir.dirName().right(1) == '\\'){
-                    dir = QDir(_curFoodDir.dirName()+item->text()+'\\');
+                if (_curFoodDir.right(1) == '\\'){
+                    dir = _curFoodDir+item->text()+'\\';
                 }else {
                     // 否则就要再加反斜杠, 注意 作为目录而言 最后再加一个反斜杠比较好理解
-                    dir = QDir(_curFoodDir.dirName()+'\\'+item->text()+'\\');
+                    dir = _curFoodDir+'\\'+item->text()+'\\';
                 }
             }
         }
-        qDebug() << "食物当前文件路径"<< dir.dirName();
+        qDebug() << "点击item" << item->text();
+        qDebug() << "当前食物文件路径"<< _curFoodDir;
+        qDebug() << "请求食物文件路径"<< dir;
+
         refreshFoodList(dir);
     }
 }
@@ -286,19 +289,19 @@ void File::refreshFoodList()
         // 拼接命令
         QString data;
         data.append(CmdGetDirFiles+CmdSplit);
-        data.append("DIR"+CmdSplit+_curFoodDir.dirName());
+        data.append("DIR"+CmdSplit+_curFoodDir);
         data.append(CmdEnd);
         mSock->write(codec->fromUnicode(data));
     }
 }
 
-void File::refreshFoodList(QDir dir)
+void File::refreshFoodList(QString dir)
 {
     if (mSock) {
         // 获取当前路径下的所有文件
         QString data;
         data.append(CmdGetDirFiles+CmdSplit);
-        data.append("DIR"+CmdSplit+dir.dirName()); // 注意！这里不能使用absolutepath 否则会自动加上本地目录前缀
+        data.append("DIR"+CmdSplit+dir); // 注意！这里不能使用absolutepath 否则会自动加上本地目录前缀
         data.append(CmdEnd);
         mSock->write(codec->fromUnicode(data));
     }
@@ -311,7 +314,7 @@ void File::downloadFile()
         foreach(QString fileName, files) {
             // 开始接收文件
             QDir localDir = _curLocalDir.absoluteFilePath(fileName);
-            QDir foodDir = _curFoodDir.dirName() + fileName;
+            QDir foodDir = _curFoodDir + fileName;
             FileTransfer *ft = new FileTransfer();
             int port = ft->startRecvFileServer(_userName,localDir.path());
 
@@ -338,7 +341,7 @@ void File::deleteFile()
                                                        QMessageBox::Yes | QMessageBox::No,
                                                        QMessageBox::Yes)){
                 foreach(QString file, files) {
-                    QString path = _curFoodDir.dirName() + file;
+                    QString path = _curFoodDir + file;
 
                     // 发送数据
                     QString data;
@@ -410,7 +413,7 @@ void File::uploadFile()
         foreach(QString fileName, files) {
             // 开始接收文件
             QDir localDir = _curLocalDir.absoluteFilePath(fileName);
-            QDir foodDir = _curFoodDir.dirName() + fileName;
+            QDir foodDir = _curFoodDir + fileName;
             FileTransfer *ft = new FileTransfer();
             int port = ft->startSendFileServer(_userName,localDir.path());
 

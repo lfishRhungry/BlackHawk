@@ -15,6 +15,7 @@
 #include <QFileIconProvider>
 #include <QMessageBox>
 #include <QTextCodec>
+#include <QDebug>
 #include "filetransfer.h"
 
 class File : public QWidget
@@ -54,7 +55,7 @@ private:
     QListWidget *mLocalFileList;   // 本机文件列表
     QMenu *mFoodMenu;             // 对食物列表的操作菜单
     QMenu *mLocalMenu;             // 对本机列表的操作菜单
-    QDir _curFoodDir;      // 当前食物路径
+    QString _curFoodDir;      // 当前食物路径
     QDir _curLocalDir;      // 当前本机路径
     TcpServer *mServer;     // 文件监控服务端
     TcpSocket *mSock;       // 连接食物
@@ -89,7 +90,7 @@ public slots:
     // 刷新食物列表
     void refreshFoodList();
     // 刷新食物列表
-    void refreshFoodList(QDir dir);
+    void refreshFoodList(QString dir);
     // 下载文件
     void downloadFile();
     // 删除文件
